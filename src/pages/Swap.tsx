@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import { FC, useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import "../styles/pages/Swap.css";
 import MainLayout from "../Layouts/MainLayout";
@@ -8,17 +8,6 @@ import ZNGN from "../assets/ZNGN.png";
 import ZZAR from "../assets/ZZAR.png";
 
 const Swap: FC = (): JSX.Element => {
-  const [isInputOpen, setInputIsOpen] = useState<boolean>(false);
-  const [isOutputOpen, setOutputIsOpen] = useState<boolean>(false);
-  const [selectedInput, setSelectedInput] = useState<string>("");
-  const [selectedOutput, setSelectedOutput] = useState<string>("");
-
-  const handleInputSelect = () => {
-    setInputIsOpen(!isInputOpen);
-  };
-  const handleOutputSelect = () => {
-    setOutputIsOpen(!isOutputOpen);
-  };
   const [inputTokens] = useState([
     {
       name: "zCFA",
@@ -55,6 +44,21 @@ const Swap: FC = (): JSX.Element => {
       image: ZZAR,
     },
   ]);
+  const [isInputOpen, setInputIsOpen] = useState<boolean>(false);
+  const [isOutputOpen, setOutputIsOpen] = useState<boolean>(false);
+  const [selectedInput, setSelectedInput] = useState<string>(
+    inputTokens[2].name
+  );
+  const [selectedOutput, setSelectedOutput] = useState<string>(
+    outputTokens[1].name
+  );
+
+  const handleInputSelect = () => {
+    setInputIsOpen(!isInputOpen);
+  };
+  const handleOutputSelect = () => {
+    setOutputIsOpen(!isOutputOpen);
+  };
 
   const swap = () => {
     if (selectedInput !== selectedOutput) {
@@ -70,6 +74,7 @@ const Swap: FC = (): JSX.Element => {
             <div className="mt-10">
               <label className="text-sm">Input</label>
               <SelectInput
+                defaultToken={inputTokens[2]}
                 setSelectedToken={setSelectedInput}
                 setIsOpen={setInputIsOpen}
                 isOpen={isInputOpen}
@@ -80,6 +85,7 @@ const Swap: FC = (): JSX.Element => {
             <div className="mt-10">
               <label className="text-sm">Output</label>
               <SelectInput
+                defaultToken={outputTokens[1]}
                 setSelectedToken={setSelectedOutput}
                 setIsOpen={setOutputIsOpen}
                 isOpen={isOutputOpen}
@@ -104,6 +110,7 @@ interface Props {
   handleSelect: any;
   setIsOpen: any;
   setSelectedToken: any;
+  defaultToken: any;
 }
 const SelectInput: FC<Props> = ({
   tokens,
@@ -111,6 +118,7 @@ const SelectInput: FC<Props> = ({
   handleSelect,
   setIsOpen,
   setSelectedToken,
+  defaultToken,
 }): JSX.Element => {
   const [selectedTokenImg, setSelectedTokenImg] = useState<any>("");
 
@@ -129,7 +137,11 @@ const SelectInput: FC<Props> = ({
         />
 
         <div className="flex cursor-pointer" onClick={handleSelect}>
-          <img src={selectedTokenImg} alt="" className="h-7" />
+          <img
+            src={selectedTokenImg || defaultToken.image}
+            alt=""
+            className="h-7"
+          />
           <BiChevronDown size={30} />
         </div>
       </div>

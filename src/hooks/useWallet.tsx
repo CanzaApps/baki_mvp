@@ -13,6 +13,7 @@ const useWallet = () => {
           .request({ method: "eth_requestAccounts" })
           .then((result: Array<string>) => {
             setAddress(result[0]);
+            localStorage.setItem("baki_user", result[0]);
             setIsConnected(true);
             navigate("/mint");
           });

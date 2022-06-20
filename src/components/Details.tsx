@@ -18,9 +18,10 @@ const Details: FC = (): JSX.Element => {
           backgroundColor: "#000",
           width: "100%",
           height: "1px",
+          marginTop: 10,
         }}
       ></div>
-      <div className="flex justify-between px-3">
+      <div className="flex justify-between px-3 mt-5">
         <p>Total</p>
         <p>$0</p>
       </div>

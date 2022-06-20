@@ -1,14 +1,18 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import logo from "../assets/baki_logo_1.png";
 import { Link, useLocation } from "react-router-dom";
 import { FaUserCircle, FaWallet } from "react-icons/fa";
 import { IoIosCloseCircle } from "react-icons/io";
+declare const window: any;
 
 const Header: FC = () => {
+  const [address, setAddress] = useState<string>("");
   const location = useLocation();
-  const [address] = useState<string>(
-    "0x8D28Dc74c0374fBEcDccDb5C51561B2faaEeAe82"
-  );
+
+  useEffect(() => {
+    setAddress(window.localStorage.getItem("baki_user"));
+  }, []);
+
   return (
     <div className="p-5 w-full bg-red-100 flex justify-center">
       <div className="w-10/12 flex justify-between items-center">
