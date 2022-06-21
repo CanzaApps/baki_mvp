@@ -2,12 +2,14 @@ import { FC, useEffect, useState } from "react";
 import logo from "../assets/baki_logo_1.png";
 import { Link, useLocation } from "react-router-dom";
 import { FaUserCircle, FaWallet } from "react-icons/fa";
-import { IoIosCloseCircle } from "react-icons/io";
+
+import useWallet from "../hooks/useWallet";
 declare const window: any;
 
 const Header: FC = () => {
   const [address, setAddress] = useState<string>("");
   const location = useLocation();
+  const { getWalletBallance } = useWallet();
 
   useEffect(() => {
     setAddress(window.localStorage.getItem("baki_user"));
@@ -48,7 +50,6 @@ const Header: FC = () => {
                 <p>
                   {address.slice(0, 6)}...{address.slice(37, 42)}
                 </p>
-                <IoIosCloseCircle size={15} className="ml-2 cursor-pointer" />
               </div>
             </div>
           </div>
