@@ -1,4 +1,4 @@
-import { createContext, useState, FC } from "react";
+import { createContext, useState } from "react";
 export const Context = createContext<any | null>(null);
 declare const window: any;
 export const AuthProvider = ({ children }: any) => {
