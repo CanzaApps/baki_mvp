@@ -6,8 +6,11 @@ import ZCFA from "../assets/ZCFA.png";
 import ZUSD from "../assets/ZUSD.png";
 import ZNGN from "../assets/ZNGN.png";
 import ZZAR from "../assets/ZZAR.png";
+import { config } from "../config";
+import useBaki from "../hooks/useBaki";
 
 const Swap: FC = (): JSX.Element => {
+  const { swap } = useBaki();
   const [inputTokens] = useState([
     {
       name: "zCFA",
@@ -35,16 +38,13 @@ const Swap: FC = (): JSX.Element => {
       name: "zNGN",
       image: ZNGN,
     },
-    {
-      name: "zUSD",
-      image: ZUSD,
-    },
+
     {
       name: "zZAR",
       image: ZZAR,
     },
   ]);
-  const [isInputOpen, setInputIsOpen] = useState<boolean>(false);
+
   const [isOutputOpen, setOutputIsOpen] = useState<boolean>(false);
   const [selectedInput, setSelectedInput] = useState<string>(
     inputTokens[2].name
@@ -52,16 +52,32 @@ const Swap: FC = (): JSX.Element => {
   const [selectedOutput, setSelectedOutput] = useState<string>(
     outputTokens[1].name
   );
+  const [fromAmount, setFromAmount] = useState<any>();
+  const [toAmount, setToAmount] = useState<any>();
+  const [zCFAzUSDPair] = useState<number>(621);
+  const [zNGNzUSDPair] = useState<number>(415);
+  const [zZARzUSDPair] = useState<number>(16);
 
-  const handleInputSelect = () => {
-    setInputIsOpen(!isInputOpen);
-  };
   const handleOutputSelect = () => {
     setOutputIsOpen(!isOutputOpen);
   };
 
-  const swap = () => {
+  const handleSwap = async () => {
     if (selectedInput !== selectedOutput) {
+      try {
+        if (selectedOutput === "zCFA") {
+          await swap(fromAmount, config.zUSD, config.zCFA, zCFAzUSDPair);
+        }
+        if (selectedOutput === "zNGN") {
+          await swap(fromAmount, config.zUSD, config.zNGN, zNGNzUSDPair);
+        }
+        if (selectedOutput === "zZAR") {
+          await swap(fromAmount, config.zUSD, config.zZAR, zZARzUSDPair);
+        }
+        alert("Transaction successfully !!");
+      } catch (error) {
+        alert("Transaction unsuccessful !!");
+      }
     }
   };
   return (
@@ -75,26 +91,31 @@ const Swap: FC = (): JSX.Element => {
               <label className="text-sm">Input</label>
               <SelectInput
                 defaultToken={inputTokens[2]}
-                setSelectedToken={setSelectedInput}
-                setIsOpen={setInputIsOpen}
-                isOpen={isInputOpen}
-                handleSelect={handleInputSelect}
-                tokens={inputTokens}
+                value={fromAmount}
+                method={setFromAmount}
+                effect={setToAmount}
+                rate={{
+                  zZARzUSDPair,
+                  zCFAzUSDPair,
+                  zNGNzUSDPair,
+                }}
+                output={selectedOutput}
               />
             </div>
             <div className="mt-10">
               <label className="text-sm">Output</label>
-              <SelectInput
+              <SelectOutput
                 defaultToken={outputTokens[1]}
                 setSelectedToken={setSelectedOutput}
                 setIsOpen={setOutputIsOpen}
                 isOpen={isOutputOpen}
                 handleSelect={handleOutputSelect}
                 tokens={outputTokens}
+                value={toAmount}
               />
             </div>
 
-            <button className="swap-btn" onClick={swap}>
+            <button className="swap-btn" onClick={handleSwap}>
               Swap
             </button>
           </div>
@@ -111,14 +132,16 @@ interface Props {
   setIsOpen: any;
   setSelectedToken: any;
   defaultToken: any;
+  value: number;
 }
-const SelectInput: FC<Props> = ({
+const SelectOutput: FC<Props> = ({
   tokens,
   isOpen,
   handleSelect,
   setIsOpen,
   setSelectedToken,
   defaultToken,
+  value,
 }): JSX.Element => {
   const [selectedTokenImg, setSelectedTokenImg] = useState<any>("");
 
@@ -134,6 +157,7 @@ const SelectInput: FC<Props> = ({
           type="text"
           placeholder="0.0"
           className="w-full focus:outline-none"
+          value={value}
         />
 
         <div className="flex cursor-pointer" onClick={handleSelect}>
@@ -164,6 +188,53 @@ const SelectInput: FC<Props> = ({
             <p className="ml-2 text-sm">{token.name}</p>
           </div>
         ))}
+      </div>
+    </div>
+  );
+};
+
+interface InputProp {
+  value: any;
+  method: any;
+  defaultToken: any;
+  effect: any;
+  rate: any;
+  output: any;
+}
+
+const SelectInput: FC<InputProp> = ({
+  defaultToken,
+  value,
+  method,
+  effect,
+  rate,
+  output,
+}): JSX.Element => {
+  return (
+    <div className=" border-2 p-2 rounded-lg">
+      <div className="flex">
+        <input
+          type="text"
+          placeholder="0.0"
+          className="w-full focus:outline-none"
+          value={value}
+          onChange={e => {
+            method(e.target.value);
+            if (output === "zNGN") {
+              effect(parseInt(e.target.value) * rate.zNGNzUSDPair);
+            }
+            if (output === "zCFA") {
+              effect(parseInt(e.target.value) * rate.zCFAzUSDPair);
+            }
+            if (output === "zZAR") {
+              effect(parseInt(e.target.value) * rate.zZARzUSDPair);
+            }
+          }}
+        />
+
+        <div className="flex cursor-pointer">
+          <img src={defaultToken.image} alt="" className="h-7" />
+        </div>
       </div>
     </div>
   );

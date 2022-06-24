@@ -1,6 +1,8 @@
 import { FC } from "react";
+import useBaki from "../hooks/useBaki";
 
 const Details: FC = (): JSX.Element => {
+  const {} = useBaki();
   return (
     <div className="w-96 shadow-md mint-details p-2 ml-5">
       <p className="font-bold text-xl ">Open Position</p>

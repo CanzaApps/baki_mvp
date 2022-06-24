@@ -4,6 +4,7 @@ import MainLayout from "../Layouts/MainLayout";
 import MintComponent from "../components/Mint";
 import Repay from "../components/Repay";
 import Details from "../components/Details";
+
 declare const window: any;
 
 const Mint: FC = (): JSX.Element => {

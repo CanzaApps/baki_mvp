@@ -6,6 +6,7 @@ import useWallet from "../hooks/useWallet";
 
 const Home: FC = (): JSX.Element => {
   const { connectWallet } = useWallet();
+
   return (
     <div className="flex justify-center items-center h-screen flex-col">
       <img src={logo} alt="" className="h-40 " />
