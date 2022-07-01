@@ -3,13 +3,11 @@ import logo from "../assets/baki_logo_1.png";
 import { Link, useLocation } from "react-router-dom";
 import { FaUserCircle, FaWallet } from "react-icons/fa";
 
-import useWallet from "../hooks/useWallet";
 declare const window: any;
 
 const Header: FC = () => {
   const [address, setAddress] = useState<string>("");
   const location = useLocation();
-  const { getWalletBallance } = useWallet();
 
   useEffect(() => {
     setAddress(window.localStorage.getItem("baki_user"));
