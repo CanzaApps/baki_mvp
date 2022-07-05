@@ -16,7 +16,11 @@ const Mint: FC = (): JSX.Element => {
   return (
     <MainLayout>
       <div className="flex w-260 justify-around mt-10">
-        <div>
+        <div
+          style={{
+            width: 500,
+          }}
+        >
           <div className="flex justify-around px-3">
             <button
               style={{

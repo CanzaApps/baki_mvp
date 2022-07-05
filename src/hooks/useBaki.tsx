@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { config } from "../config";
 import Vault from "../contracts/Vault.json";
 declare const window: any;
@@ -7,6 +8,7 @@ declare const window: any;
 const useBaki = () => {
   const [provider, setProvider] = useState<any>(null);
   const [contract, setContract] = useState<any>(null);
+  let navigate = useNavigate();
 
   useEffect(() => {
     setProvider(new ethers.providers.Web3Provider(window.ethereum));
@@ -18,6 +20,21 @@ const useBaki = () => {
       setContract(new ethers.Contract(config.vaultAddress, Vault, signer));
     }
   }, [provider]);
+
+  const connectWallet = (wallet: string) => {
+    if (wallet === "metamask") {
+      if (window.ethereum) {
+        window.ethereum
+          .request({ method: "eth_requestAccounts" })
+          .then((result: Array<string>) => {
+            localStorage.setItem("baki_user", result[0]);
+            navigate("/mint");
+          });
+      }
+    }
+  };
+
+  const getWalletBallance = (): any => {};
 
   const deposit = async (depositAmount: number, mintAmount: number) => {
     try {
@@ -67,6 +84,8 @@ const useBaki = () => {
   };
 
   return {
+    connectWallet,
+    getWalletBallance,
     deposit,
     repay,
     swap,

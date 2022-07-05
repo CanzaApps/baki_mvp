@@ -38,7 +38,10 @@ const Swap: FC = (): JSX.Element => {
       name: "zNGN",
       image: ZNGN,
     },
-
+    {
+      name: "zUSD",
+      image: ZUSD,
+    },
     {
       name: "zZAR",
       image: ZZAR,
@@ -46,6 +49,7 @@ const Swap: FC = (): JSX.Element => {
   ]);
 
   const [isOutputOpen, setOutputIsOpen] = useState<boolean>(false);
+  const [isInputOpen, setInputIsOpen] = useState<boolean>(false);
   const [selectedInput, setSelectedInput] = useState<string>(
     inputTokens[2].name
   );
@@ -60,6 +64,9 @@ const Swap: FC = (): JSX.Element => {
 
   const handleOutputSelect = () => {
     setOutputIsOpen(!isOutputOpen);
+  };
+  const handleInputSelect = () => {
+    setInputIsOpen(!isInputOpen);
   };
 
   const handleSwap = async () => {
@@ -91,15 +98,13 @@ const Swap: FC = (): JSX.Element => {
               <label className="text-sm">Input</label>
               <SelectInput
                 defaultToken={inputTokens[2]}
+                setSelectedToken={setSelectedInput}
+                setIsOpen={setInputIsOpen}
+                isOpen={isInputOpen}
+                handleSelect={handleInputSelect}
+                tokens={inputTokens}
                 value={fromAmount}
-                method={setFromAmount}
-                effect={setToAmount}
-                rate={{
-                  zZARzUSDPair,
-                  zCFAzUSDPair,
-                  zNGNzUSDPair,
-                }}
-                output={selectedOutput}
+                setValue={setFromAmount}
               />
             </div>
             <div className="mt-10">
@@ -112,6 +117,7 @@ const Swap: FC = (): JSX.Element => {
                 handleSelect={handleOutputSelect}
                 tokens={outputTokens}
                 value={toAmount}
+                setValue={setToAmount}
               />
             </div>
 
@@ -133,6 +139,7 @@ interface Props {
   setSelectedToken: any;
   defaultToken: any;
   value: number;
+  setValue: any;
 }
 const SelectOutput: FC<Props> = ({
   tokens,
@@ -142,6 +149,7 @@ const SelectOutput: FC<Props> = ({
   setSelectedToken,
   defaultToken,
   value,
+  setValue,
 }): JSX.Element => {
   const [selectedTokenImg, setSelectedTokenImg] = useState<any>("");
 
@@ -158,6 +166,7 @@ const SelectOutput: FC<Props> = ({
           placeholder="0.0"
           className="w-full focus:outline-none"
           value={value}
+          onChange={(e): void => setValue(e.target.value)}
         />
 
         <div className="flex cursor-pointer" onClick={handleSelect}>
@@ -194,22 +203,33 @@ const SelectOutput: FC<Props> = ({
 };
 
 interface InputProp {
-  value: any;
-  method: any;
+  tokens: any;
+  isOpen: boolean;
+  handleSelect: any;
+  setIsOpen: any;
+  setSelectedToken: any;
   defaultToken: any;
-  effect: any;
-  rate: any;
-  output: any;
+  value: number;
+  setValue: any;
 }
 
 const SelectInput: FC<InputProp> = ({
+  tokens,
+  isOpen,
+  handleSelect,
+  setIsOpen,
+  setSelectedToken,
   defaultToken,
   value,
-  method,
-  effect,
-  rate,
-  output,
+  setValue,
 }): JSX.Element => {
+  const [selectedTokenImg, setSelectedTokenImg] = useState<any>("");
+
+  const select = (_token: any) => {
+    setSelectedToken(_token.name);
+    setSelectedTokenImg(_token.image);
+    setIsOpen(!isOpen);
+  };
   return (
     <div className=" border-2 p-2 rounded-lg">
       <div className="flex">
@@ -218,23 +238,37 @@ const SelectInput: FC<InputProp> = ({
           placeholder="0.0"
           className="w-full focus:outline-none"
           value={value}
-          onChange={e => {
-            method(e.target.value);
-            if (output === "zNGN") {
-              effect(parseInt(e.target.value) * rate.zNGNzUSDPair);
-            }
-            if (output === "zCFA") {
-              effect(parseInt(e.target.value) * rate.zCFAzUSDPair);
-            }
-            if (output === "zZAR") {
-              effect(parseInt(e.target.value) * rate.zZARzUSDPair);
-            }
-          }}
+          onChange={(e): void => setValue(e.target.value)}
         />
 
-        <div className="flex cursor-pointer">
-          <img src={defaultToken.image} alt="" className="h-7" />
+        <div className="flex cursor-pointer" onClick={handleSelect}>
+          <img
+            src={selectedTokenImg || defaultToken.image}
+            alt=""
+            className="h-7"
+          />
+          <BiChevronDown size={30} />
         </div>
+      </div>
+      <div
+        style={{
+          transition: "all 0.3s ease-in-out",
+          height: isOpen ? 170 : 0,
+        }}
+      >
+        {tokens.map((token: any) => (
+          <div
+            onClick={(): void => select(token)}
+            style={{
+              transition: "all 0.3s ease-in-out",
+              display: isOpen ? "flex" : "none",
+            }}
+            className="flex items-center hover:bg-red-100 p-2 cursor-pointer"
+          >
+            <img src={token.image} alt="" className="h-7" />
+            <p className="ml-2 text-sm">{token.name}</p>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -53,14 +53,7 @@ const Header: FC = () => {
           </div>
           <div className="w-100 flex items-center ml-7">
             <FaWallet size={20} />
-            <div className="text-sm ml-3">
-              <p className="font-bold">cUSD</p>
-              <p className="text-center">0.0</p>
-            </div>
-            <div className="text-sm ml-3">
-              <p className="font-bold">CELO</p>
-              <p className="text-center">0.0</p>
-            </div>
+
             <div className="text-sm ml-3">
               <p className="font-bold">zUSD</p>
               <p className="text-center">0.0</p>
