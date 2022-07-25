@@ -2,10 +2,10 @@ import React, { FC } from "react";
 import "../styles/pages/Home.css";
 import logo from "../assets/baki_logo_1.png";
 import metamask from "../assets/metamask.png";
-import useWallet from "../hooks/useWallet";
+import useBaki from "../hooks/useBaki";
 
 const Home: FC = (): JSX.Element => {
-  const { connectWallet } = useWallet();
+  const { connectWallet } = useBaki();
 
   return (
     <div className="flex justify-center items-center h-screen flex-col">
@@ -15,7 +15,7 @@ const Home: FC = (): JSX.Element => {
         for real value. Connect Your Wallet to get started.
       </p>
 
-      <button className="home-btn" onClick={() => connectWallet("metamask")}>
+      <button className="home-btn" onClick={connectWallet}>
         <img src={metamask} alt="" className="h-7 " />
         <span className="ml-2"> Metamask </span>
       </button>

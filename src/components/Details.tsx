@@ -1,14 +1,16 @@
 import { FC } from "react";
-import useBaki from "../hooks/useBaki";
 
 const Details: FC = (): JSX.Element => {
-  const {} = useBaki();
   return (
     <div className="w-96 shadow-md mint-details p-2 ml-5">
       <p className="font-bold text-xl ">Open Position</p>
       <p className="px-3 font-bold mt-5">Current User Collateral</p>
       <div className="flex justify-between px-3">
-        <p>CELO</p>
+        <p>AVAX</p>
+        <p>$0</p>
+      </div>
+      <div className="flex justify-between px-3">
+        <p>USDK</p>
         <p>$0</p>
       </div>
       <div className="flex justify-between px-3">
@@ -28,6 +30,14 @@ const Details: FC = (): JSX.Element => {
         <p>$0</p>
       </div>
       <p className="px-3 font-bold mt-5">Outstanding zUSD Debt</p>
+      <div className="flex justify-between px-3">
+        <p>User Net Mint</p>
+        <p>$0</p>
+      </div>
+      <div className="flex justify-between px-3">
+        <p>Global Net Mint</p>
+        <p>$0</p>
+      </div>
       <div className="flex justify-between px-3">
         <p>Global Debt</p>
         <p>$0</p>

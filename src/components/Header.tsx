@@ -3,13 +3,11 @@ import logo from "../assets/baki_logo_1.png";
 import { Link, useLocation } from "react-router-dom";
 import { FaUserCircle, FaWallet } from "react-icons/fa";
 
-import useWallet from "../hooks/useWallet";
 declare const window: any;
 
 const Header: FC = () => {
   const [address, setAddress] = useState<string>("");
   const location = useLocation();
-  const { getWalletBallance } = useWallet();
 
   useEffect(() => {
     setAddress(window.localStorage.getItem("baki_user"));
@@ -55,14 +53,7 @@ const Header: FC = () => {
           </div>
           <div className="w-100 flex items-center ml-7">
             <FaWallet size={20} />
-            <div className="text-sm ml-3">
-              <p className="font-bold">cUSD</p>
-              <p className="text-center">0.0</p>
-            </div>
-            <div className="text-sm ml-3">
-              <p className="font-bold">CELO</p>
-              <p className="text-center">0.0</p>
-            </div>
+
             <div className="text-sm ml-3">
               <p className="font-bold">zUSD</p>
               <p className="text-center">0.0</p>
@@ -73,6 +64,10 @@ const Header: FC = () => {
             </div>
             <div className="text-sm ml-3">
               <p className="font-bold">zNGN</p>
+              <p className="text-center">0.0</p>
+            </div>
+            <div className="text-sm ml-3">
+              <p className="font-bold">zZAR</p>
               <p className="text-center">0.0</p>
             </div>
           </div>
