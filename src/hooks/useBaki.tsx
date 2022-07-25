@@ -1,14 +1,18 @@
-import { ethers } from "ethers";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { config } from "../config";
 import Vault from "../contracts/Vault.json";
+import { ethers } from "ethers";
+import axios from "axios";
 declare const window: any;
 
+axios.defaults.baseURL = "https://api.apilayer.com";
+axios.defaults.headers.common["apikey"] = config.exchangeRatesAPIKEY;
+
 const useBaki = () => {
+  let navigate = useNavigate();
   const [provider, setProvider] = useState<any>(null);
   const [contract, setContract] = useState<any>(null);
-  let navigate = useNavigate();
 
   useEffect(() => {
     setProvider(new ethers.providers.Web3Provider(window.ethereum));
@@ -21,70 +25,46 @@ const useBaki = () => {
     }
   }, [provider]);
 
-  const connectWallet = (wallet: string) => {
-    if (wallet === "metamask") {
-      if (window.ethereum) {
-        window.ethereum
-          .request({ method: "eth_requestAccounts" })
-          .then((result: Array<string>) => {
-            localStorage.setItem("baki_user", result[0]);
-            navigate("/mint");
-          });
-      }
-    }
+  const getRates = async () => {
+    const result = await axios.get(
+      "/exchangerates_data/latest?symbols=NGN,XAF,ZAR&base=USD"
+    );
+    return result.data.rates;
   };
 
-  const getWalletBallance = (): any => {};
-
-  const deposit = async (depositAmount: number, mintAmount: number) => {
-    try {
-      const result = await contract.deposit(depositAmount, mintAmount);
-
-      return result;
-    } catch (err) {
-      console.log(err);
-    }
+  const connectWallet = async () => {
+    provider.send("eth_requestAccounts").then((result: Array<string>) => {
+      localStorage.setItem("baki_user", result[0]);
+      navigate("/mint");
+    });
   };
+  const changeNetwork = async (network: any) => {
+    provider.send("wallet_addEthereumChain", [config.networks[network]]);
+    connectWallet();
+  };
+  const getWalletBallance = async () => {};
+
+  const deposit = async (depositAmount: number, mintAmount: number) => {};
   const repay = async (
     _amountToRepay: number,
     _amountToWithdraw: number,
     _zToken: string,
     rate: number
-  ) => {
-    try {
-      const result = await contract.repayAndWithdraw(
-        _amountToRepay,
-        _amountToWithdraw,
-        _zToken,
-        rate
-      );
-      return result;
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  ) => {};
   const swap = async (
     _amount: number,
     _fromzToken: string,
-    _tozToken: string,
-    rate: number
+    _tozToken: string
   ) => {
-    try {
-      const result = await contract.swap(_amount, _fromzToken, _tozToken, rate);
-      console.log(result);
-
-      return result;
-    } catch (error) {
-      console.log(error);
-    }
+    getRates().then(rates => {
+      console.log(rates);
+    });
   };
-  const mint = async (mintAmount: number) => {
-    const result = await contract.deposit(0, mintAmount);
-    return result;
-  };
+  const mint = async (mintAmount: number) => {};
 
   return {
     connectWallet,
+    changeNetwork,
     getWalletBallance,
     deposit,
     repay,

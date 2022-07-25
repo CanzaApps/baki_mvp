@@ -15,7 +15,7 @@ const Home: FC = (): JSX.Element => {
         for real value. Connect Your Wallet to get started.
       </p>
 
-      <button className="home-btn" onClick={() => connectWallet("metamask")}>
+      <button className="home-btn" onClick={connectWallet}>
         <img src={metamask} alt="" className="h-7 " />
         <span className="ml-2"> Metamask </span>
       </button>

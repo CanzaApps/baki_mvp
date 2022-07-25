@@ -5,14 +5,9 @@ import MintComponent from "../components/Mint";
 import Repay from "../components/Repay";
 import Details from "../components/Details";
 
-declare const window: any;
-
 const Mint: FC = (): JSX.Element => {
   const [isMint, setIsMint] = useState<boolean>(true);
-  window.ethereum.on("disconnect", () => {
-    localStorage.removeItem("baki_user");
-    alert("Please connect to Metamask");
-  });
+
   return (
     <MainLayout>
       <div className="flex w-260 justify-around mt-10">

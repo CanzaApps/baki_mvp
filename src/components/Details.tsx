@@ -31,6 +31,14 @@ const Details: FC = (): JSX.Element => {
       </div>
       <p className="px-3 font-bold mt-5">Outstanding zUSD Debt</p>
       <div className="flex justify-between px-3">
+        <p>User Net Mint</p>
+        <p>$0</p>
+      </div>
+      <div className="flex justify-between px-3">
+        <p>Global Net Mint</p>
+        <p>$0</p>
+      </div>
+      <div className="flex justify-between px-3">
         <p>Global Debt</p>
         <p>$0</p>
       </div>

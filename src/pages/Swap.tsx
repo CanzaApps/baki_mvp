@@ -6,7 +6,7 @@ import ZCFA from "../assets/ZCFA.png";
 import ZUSD from "../assets/ZUSD.png";
 import ZNGN from "../assets/ZNGN.png";
 import ZZAR from "../assets/ZZAR.png";
-import { config } from "../config";
+
 import useBaki from "../hooks/useBaki";
 
 const Swap: FC = (): JSX.Element => {
@@ -47,7 +47,6 @@ const Swap: FC = (): JSX.Element => {
       image: ZZAR,
     },
   ]);
-
   const [isOutputOpen, setOutputIsOpen] = useState<boolean>(false);
   const [isInputOpen, setInputIsOpen] = useState<boolean>(false);
   const [selectedInput, setSelectedInput] = useState<string>(
@@ -58,9 +57,6 @@ const Swap: FC = (): JSX.Element => {
   );
   const [fromAmount, setFromAmount] = useState<any>();
   const [toAmount, setToAmount] = useState<any>();
-  const [zCFAzUSDPair] = useState<number>(621);
-  const [zNGNzUSDPair] = useState<number>(415);
-  const [zZARzUSDPair] = useState<number>(16);
 
   const handleOutputSelect = () => {
     setOutputIsOpen(!isOutputOpen);
@@ -70,23 +66,13 @@ const Swap: FC = (): JSX.Element => {
   };
 
   const handleSwap = async () => {
+    swap(1, "zCFA", "zNGN");
     if (selectedInput !== selectedOutput) {
-      try {
-        if (selectedOutput === "zCFA") {
-          await swap(fromAmount, config.zUSD, config.zCFA, zCFAzUSDPair);
-        }
-        if (selectedOutput === "zNGN") {
-          await swap(fromAmount, config.zUSD, config.zNGN, zNGNzUSDPair);
-        }
-        if (selectedOutput === "zZAR") {
-          await swap(fromAmount, config.zUSD, config.zZAR, zZARzUSDPair);
-        }
-        alert("Transaction successfully !!");
-      } catch (error) {
-        alert("Transaction unsuccessful !!");
+      if (fromAmount && toAmount) {
       }
     }
   };
+
   return (
     <MainLayout>
       <div className="flex w-260 justify-around mt-10">
@@ -186,6 +172,7 @@ const SelectOutput: FC<Props> = ({
       >
         {tokens.map((token: any) => (
           <div
+            key={token.name}
             onClick={(): void => select(token)}
             style={{
               transition: "all 0.3s ease-in-out",
@@ -258,6 +245,7 @@ const SelectInput: FC<InputProp> = ({
       >
         {tokens.map((token: any) => (
           <div
+            key={token.name}
             onClick={(): void => select(token)}
             style={{
               transition: "all 0.3s ease-in-out",

@@ -1,17 +1,22 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import CUSD from "../assets/cUSD.png";
 import useBaki from "../hooks/useBaki";
 import AVAX from "../assets/avax.png";
 import USDK from "../assets/usdk.png";
 import ZUSD from "../assets/ZUSD.png";
-
+import { config } from "../config";
+import redstone from "redstone-api";
 import { BiChevronDown } from "react-icons/bi";
+
+import axios from "axios";
+axios.defaults.baseURL = `https://api.coinlayer.com/api/live?access_key=${config.coinlayerAPIKEY}`;
 
 const MintComponent: FC = (): JSX.Element => {
   const [depositAmount, setDepositAmount] = useState<any>();
   const [mintAmount, setMintAmount] = useState<any>();
   const { deposit, mint } = useBaki();
   const [isInputOpen, setInputIsOpen] = useState<boolean>(false);
+  const [avaxRate, setAvaxRate] = useState<any>(false);
   const [collaterals] = useState([
     {
       name: "cUSD",
@@ -33,6 +38,10 @@ const MintComponent: FC = (): JSX.Element => {
   );
   const handleInputSelect = () => {
     setInputIsOpen(!isInputOpen);
+  };
+  const getAvaxRate = async () => {
+    const price = await redstone.getPrice("AVAX");
+    setAvaxRate(price.value);
   };
 
   const handleDeposit = async () => {
@@ -63,6 +72,11 @@ const MintComponent: FC = (): JSX.Element => {
     }
   };
 
+  useEffect(() => {
+    if (selectedInput === "AVAX") {
+      getAvaxRate();
+    }
+  }, [selectedInput]);
   return (
     <div className=" w-95 shadow-md rounded-lg mt-7">
       <div className="p-2 w-full justify-center items-center rounded-lg">
@@ -133,7 +147,9 @@ const MintComponent: FC = (): JSX.Element => {
         </div>
         <div className="pt-3">
           <p>
-            <span>Price:</span> 1 <b>{selectedInput}</b> = 1 <b>zUSD</b>
+            <span className="p-2">Price:</span>
+            {selectedInput === "AVAX" ? avaxRate.toString().slice(0, 6) : "1"}
+            <b>zUSD</b> = 1<b>{selectedInput}</b>
           </p>
         </div>
         <button className="mint-btn" onClick={controller}>
@@ -165,11 +181,13 @@ const SelectCollateral: FC<Props> = ({
   updateCollateralValue,
 }): JSX.Element => {
   const [selectedTokenImg, setSelectedTokenImg] = useState<any>("");
+  const { changeNetwork } = useBaki();
 
   const select = (_token: any) => {
     setSelectedToken(_token.name);
     setSelectedTokenImg(_token.image);
     setIsOpen(!isOpen);
+    changeNetwork(_token.name);
   };
   return (
     <div className=" border-2 p-2 rounded-lg">
@@ -199,6 +217,7 @@ const SelectCollateral: FC<Props> = ({
       >
         {tokens.map((token: any) => (
           <div
+            key={token.name}
             onClick={(): void => select(token)}
             style={{
               transition: "all 0.3s ease-in-out",
@@ -216,3 +235,5 @@ const SelectCollateral: FC<Props> = ({
 };
 
 export default MintComponent;
+
+// http://api.coinlayer.com/api/live?access_key=49505e855f2ab02b59638b6895755f23&symbols=BTC,ETH

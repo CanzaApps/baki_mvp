@@ -66,6 +66,10 @@ const Header: FC = () => {
               <p className="font-bold">zNGN</p>
               <p className="text-center">0.0</p>
             </div>
+            <div className="text-sm ml-3">
+              <p className="font-bold">zZAR</p>
+              <p className="text-center">0.0</p>
+            </div>
           </div>
         </div>
       </div>

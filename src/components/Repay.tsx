@@ -1,17 +1,18 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import CUSD from "../assets/cUSD.png";
 import ZUSD from "../assets/ZUSD.png";
 import useBaki from "../hooks/useBaki";
 import AVAX from "../assets/avax.png";
 import USDK from "../assets/usdk.png";
 import { BiChevronDown } from "react-icons/bi";
-
+import redstone from "redstone-api";
 import { config } from "../config";
 
 const Repay: FC = (): JSX.Element => {
   const [withdrawAmount, setWithdrawAmount] = useState<any>();
   const [repayAmount, setRepayAmount] = useState<any>();
   const [isInputOpen, setInputIsOpen] = useState<boolean>(false);
+  const [avaxRate, setAvaxRate] = useState<any>(false);
   const [collaterals] = useState([
     {
       name: "cUSD",
@@ -26,7 +27,10 @@ const Repay: FC = (): JSX.Element => {
       image: AVAX,
     },
   ]);
-
+  const getAvaxRate = async () => {
+    const price = await redstone.getPrice("AVAX");
+    setAvaxRate(price.value);
+  };
   const [selectedInput, setSelectedInput] = useState<string>(
     collaterals[0].name
   );
@@ -45,6 +49,11 @@ const Repay: FC = (): JSX.Element => {
       alert("Transaction unsuccessful !!");
     }
   };
+  useEffect(() => {
+    if (selectedInput === "AVAX") {
+      getAvaxRate();
+    }
+  }, [selectedInput]);
   return (
     <div className=" w-100 shadow-md rounded-lg mt-7">
       <div className="p-2 w-full justify-center items-center rounded-lg">
@@ -97,7 +106,9 @@ const Repay: FC = (): JSX.Element => {
         </div>
         <div className="pt-3">
           <p>
-            <span>Price:</span> 1 <b>{selectedInput}</b> = 1 <b>zUSD</b>
+            <span className="p-2">Price: </span>
+            {selectedInput === "AVAX" ? avaxRate.toString().slice(0, 6) : "1"}
+            <b>zUSD</b> = 1 <b>{selectedInput}</b>
           </p>
         </div>
         <button className="mint-btn" onClick={handleRepay}>
@@ -129,11 +140,12 @@ const SelectCollateral: FC<Props> = ({
   updateCollateralValue,
 }): JSX.Element => {
   const [selectedTokenImg, setSelectedTokenImg] = useState<any>("");
-
+  const { changeNetwork } = useBaki();
   const select = (_token: any) => {
     setSelectedToken(_token.name);
     setSelectedTokenImg(_token.image);
     setIsOpen(!isOpen);
+    changeNetwork(_token.name);
   };
   return (
     <div className=" border-2 p-2 rounded-lg">
