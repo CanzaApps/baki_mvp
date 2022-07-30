@@ -1,16 +1,22 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import "../styles/pages/Swap.css";
+import axios from "axios";
+import { config } from "../config";
 import MainLayout from "../Layouts/MainLayout";
 import ZCFA from "../assets/ZCFA.png";
 import ZUSD from "../assets/ZUSD.png";
 import ZNGN from "../assets/ZNGN.png";
 import ZZAR from "../assets/ZZAR.png";
+import { useSelector, useDispatch } from "react-redux";
+import { updateSwapOutput } from "../redux/reducers/bakiReducer";
 
 import useBaki from "../hooks/useBaki";
+axios.defaults.headers.common["apikey"] = config.exchangeRatesAPIKEY;
 
 const Swap: FC = (): JSX.Element => {
   const { swap } = useBaki();
+  const dispatch = useDispatch();
   const [inputTokens] = useState([
     {
       name: "zCFA",
@@ -57,6 +63,7 @@ const Swap: FC = (): JSX.Element => {
   );
   const [fromAmount, setFromAmount] = useState<any>();
   const [toAmount, setToAmount] = useState<any>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleOutputSelect = () => {
     setOutputIsOpen(!isOutputOpen);
@@ -65,13 +72,55 @@ const Swap: FC = (): JSX.Element => {
     setInputIsOpen(!isInputOpen);
   };
 
+  const getRates = async (base: string, target: string) => {
+    const result = await axios.get(
+      `https://api.apilayer.com/exchangerates_data/latest?symbols=${target}base=${base}`
+    );
+    return result.data.rates;
+  };
+
   const handleSwap = async () => {
-    swap(1, "zCFA", "zNGN");
     if (selectedInput !== selectedOutput) {
-      if (fromAmount && toAmount) {
+      // get rates
+      if (!loading) {
+        swap(fromAmount, selectedInput, selectedOutput);
       }
     }
   };
+
+  useEffect(() => {
+    if (fromAmount) {
+      setLoading(true);
+      axios
+        .get(
+          `https://api.apilayer.com/exchangerates_data/latest?symbols=${selectedOutput.substring(
+            1
+          )}&base=${selectedInput.substring(1)}`
+        )
+        .then((res: any) => {
+          if (selectedOutput.substring(1) === "NGN") {
+            const output = res.data.rates.NGN * fromAmount;
+            dispatch(updateSwapOutput(output));
+          }
+          if (selectedOutput.substring(1) === "ZAR") {
+            const output = res.data.rates.ZAR * fromAmount;
+            dispatch(updateSwapOutput(output));
+          }
+          if (selectedOutput.substring(1) === "CFA") {
+            const output = res.data.rates.CFA * fromAmount;
+            dispatch(updateSwapOutput(output));
+          }
+          if (selectedOutput.substring(1) === "USD") {
+            const output = res.data.rates.USD * fromAmount;
+            dispatch(updateSwapOutput(output));
+          }
+          setLoading(false);
+        })
+        .catch(() => {
+          setLoading(false);
+        });
+    }
+  }, [fromAmount, selectedOutput, selectedInput]);
 
   return (
     <MainLayout>
@@ -108,7 +157,7 @@ const Swap: FC = (): JSX.Element => {
             </div>
 
             <button className="swap-btn" onClick={handleSwap}>
-              Swap
+              {loading ? "Loading..." : "Swap"}
             </button>
           </div>
         </div>
@@ -139,6 +188,7 @@ const SelectOutput: FC<Props> = ({
 }): JSX.Element => {
   const [selectedTokenImg, setSelectedTokenImg] = useState<any>("");
 
+  const { swapOutput } = useSelector((state: any) => state.baki);
   const select = (_token: any) => {
     setSelectedToken(_token.name);
     setSelectedTokenImg(_token.image);
@@ -151,8 +201,7 @@ const SelectOutput: FC<Props> = ({
           type="text"
           placeholder="0.0"
           className="w-full focus:outline-none"
-          value={value}
-          onChange={(e): void => setValue(e.target.value)}
+          value={swapOutput}
         />
 
         <div className="flex cursor-pointer" onClick={handleSelect}>

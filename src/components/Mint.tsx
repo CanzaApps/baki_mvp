@@ -1,4 +1,5 @@
 import { FC, useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import CUSD from "../assets/cUSD.png";
 import useBaki from "../hooks/useBaki";
 import AVAX from "../assets/avax.png";
@@ -9,14 +10,18 @@ import redstone from "redstone-api";
 import { BiChevronDown } from "react-icons/bi";
 
 import axios from "axios";
+import { updateCollateral } from "../redux/reducers/bakiReducer";
 axios.defaults.baseURL = `https://api.coinlayer.com/api/live?access_key=${config.coinlayerAPIKEY}`;
 
 const MintComponent: FC = (): JSX.Element => {
   const [depositAmount, setDepositAmount] = useState<any>();
   const [mintAmount, setMintAmount] = useState<any>();
-  const { deposit, mint } = useBaki();
+  const { deposit } = useBaki();
   const [isInputOpen, setInputIsOpen] = useState<boolean>(false);
   const [avaxRate, setAvaxRate] = useState<any>(false);
+  const { collateralRatio, totalCollateral, userDebt } = useSelector(
+    (state: any) => state.baki
+  );
   const [collaterals] = useState([
     {
       name: "cUSD",
@@ -47,29 +52,10 @@ const MintComponent: FC = (): JSX.Element => {
   const handleDeposit = async () => {
     try {
       await deposit(depositAmount, mintAmount);
-      alert("Transaction was successful !!");
+
       setDepositAmount(0);
       setMintAmount(0);
     } catch (error) {}
-  };
-  const handleMint = async () => {
-    try {
-      await mint(mintAmount);
-      alert("Transaction was successful !!");
-      setDepositAmount(0);
-      setMintAmount(0);
-    } catch (error) {
-      alert("Transaction was !!");
-    }
-  };
-
-  const controller = async () => {
-    if (depositAmount && mintAmount) {
-      await handleDeposit();
-    }
-    if (!depositAmount && mintAmount) {
-      await handleMint();
-    }
   };
 
   useEffect(() => {
@@ -84,6 +70,7 @@ const MintComponent: FC = (): JSX.Element => {
         <div className="mt-10">
           <div className="mt-10">
             <label className="text-sm">Deposit Collateral</label>
+
             <SelectCollateral
               defaultToken={collaterals[0]}
               setSelectedToken={setSelectedInput}
@@ -98,6 +85,7 @@ const MintComponent: FC = (): JSX.Element => {
         </div>
         <div className="mt-10">
           <label className="text-sm">Mint</label>
+
           <div className="flex border-2 p-2 rounded-lg">
             <input
               type="text"
@@ -106,6 +94,7 @@ const MintComponent: FC = (): JSX.Element => {
               onChange={e => setMintAmount(e.target.value)}
               className="w-full focus:outline-none"
             />
+
             <div>
               <img src={ZUSD} alt="" className="h-7" />
             </div>
@@ -133,16 +122,18 @@ const MintComponent: FC = (): JSX.Element => {
           <div className="p-2">
             <p>Total Collateral</p>
             <p className="font-bold text-center">
-              0.0 <b>{selectedInput}</b>
+              {totalCollateral.toFixed(2)} <b>{selectedInput}</b>
             </p>
           </div>
           <div className="p-2">
             <p>Total Debt</p>
-            <p className="font-bold text-center">0.0 zUSD</p>
+            <p className="font-bold text-center">{userDebt.toFixed(2)} zUSD</p>
           </div>
           <div className="p-2">
             <p>Collateral Ratio:</p>
-            <p className="font-bold text-center">0.0%</p>
+            <p className="font-bold text-center">
+              {collateralRatio.toFixed(2)}%
+            </p>
           </div>
         </div>
         <div className="pt-3">
@@ -152,7 +143,7 @@ const MintComponent: FC = (): JSX.Element => {
             <b>zUSD</b> = 1<b>{selectedInput}</b>
           </p>
         </div>
-        <button className="mint-btn" onClick={controller}>
+        <button className="mint-btn" onClick={handleDeposit}>
           Deposit & Mint
         </button>
       </div>
@@ -182,12 +173,14 @@ const SelectCollateral: FC<Props> = ({
 }): JSX.Element => {
   const [selectedTokenImg, setSelectedTokenImg] = useState<any>("");
   const { changeNetwork } = useBaki();
+  const dispatch = useDispatch();
 
   const select = (_token: any) => {
     setSelectedToken(_token.name);
     setSelectedTokenImg(_token.image);
     setIsOpen(!isOpen);
     changeNetwork(_token.name);
+    dispatch(updateCollateral(_token.name));
   };
   return (
     <div className=" border-2 p-2 rounded-lg">

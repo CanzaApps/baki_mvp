@@ -7,12 +7,17 @@ import USDK from "../assets/usdk.png";
 import { BiChevronDown } from "react-icons/bi";
 import redstone from "redstone-api";
 import { config } from "../config";
+import { useDispatch, useSelector } from "react-redux";
+import { updateCollateral } from "../redux/reducers/bakiReducer";
 
 const Repay: FC = (): JSX.Element => {
   const [withdrawAmount, setWithdrawAmount] = useState<any>();
   const [repayAmount, setRepayAmount] = useState<any>();
   const [isInputOpen, setInputIsOpen] = useState<boolean>(false);
   const [avaxRate, setAvaxRate] = useState<any>(false);
+  const { collateralRatio, totalCollateral, userDebt } = useSelector(
+    (state: any) => state.baki
+  );
   const [collaterals] = useState([
     {
       name: "cUSD",
@@ -41,7 +46,7 @@ const Repay: FC = (): JSX.Element => {
 
   const handleRepay = async () => {
     try {
-      await repay(repayAmount, withdrawAmount, config.zUSD, 415);
+      await repay(repayAmount, withdrawAmount, config.zUSD);
       alert("Transaction successfully !!");
       setWithdrawAmount(0);
       setRepayAmount(0);
@@ -92,16 +97,18 @@ const Repay: FC = (): JSX.Element => {
           <div className="p-2">
             <p>Total Collateral</p>
             <p className="font-bold text-center">
-              0.0 <b>{selectedInput}</b>
+              {totalCollateral.toFixed(2)} <b>{selectedInput}</b>
             </p>
           </div>
           <div className="p-2">
             <p>Total Debt</p>
-            <p className="font-bold text-center">0.0 zUSD</p>
+            <p className="font-bold text-center">{userDebt.toFixed(2)} zUSD</p>
           </div>
           <div className="p-2">
             <p>Collateral Ratio:</p>
-            <p className="font-bold text-center">0.0%</p>
+            <p className="font-bold text-center">
+              {collateralRatio.toFixed(2)}%
+            </p>
           </div>
         </div>
         <div className="pt-3">
@@ -141,11 +148,13 @@ const SelectCollateral: FC<Props> = ({
 }): JSX.Element => {
   const [selectedTokenImg, setSelectedTokenImg] = useState<any>("");
   const { changeNetwork } = useBaki();
+  const dispatch = useDispatch();
   const select = (_token: any) => {
     setSelectedToken(_token.name);
     setSelectedTokenImg(_token.image);
     setIsOpen(!isOpen);
     changeNetwork(_token.name);
+    dispatch(updateCollateral(_token.name));
   };
   return (
     <div className=" border-2 p-2 rounded-lg">
@@ -173,13 +182,14 @@ const SelectCollateral: FC<Props> = ({
           height: isOpen ? 140 : 0,
         }}
       >
-        {tokens.map((token: any) => (
+        {tokens.map((token: any, index: number) => (
           <div
             onClick={(): void => select(token)}
             style={{
               transition: "all 0.3s ease-in-out",
               display: isOpen ? "flex" : "none",
             }}
+            key={index}
             className="flex items-center hover:bg-red-100 p-2 cursor-pointer"
           >
             <img src={token.image} alt="" className="h-7" />

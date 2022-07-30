@@ -1,17 +1,14 @@
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import logo from "../assets/baki_logo_1.png";
 import { Link, useLocation } from "react-router-dom";
 import { FaUserCircle, FaWallet } from "react-icons/fa";
-
-declare const window: any;
+import { useSelector } from "react-redux";
 
 const Header: FC = () => {
-  const [address, setAddress] = useState<string>("");
-  const location = useLocation();
+  const { zUSDBalance, zNGNBalance, zCFABalance, zZARBalance, userAddress } =
+    useSelector((state: any) => state.baki);
 
-  useEffect(() => {
-    setAddress(window.localStorage.getItem("baki_user"));
-  }, []);
+  const location = useLocation();
 
   return (
     <div className="p-5 w-full bg-red-100 flex justify-center">
@@ -46,7 +43,7 @@ const Header: FC = () => {
               <p className="font-bold">Connected as</p>
               <div className="flex">
                 <p>
-                  {address.slice(0, 6)}...{address.slice(37, 42)}
+                  {userAddress.slice(0, 6)}...{userAddress.slice(37, 42)}
                 </p>
               </div>
             </div>
@@ -56,19 +53,19 @@ const Header: FC = () => {
 
             <div className="text-sm ml-3">
               <p className="font-bold">zUSD</p>
-              <p className="text-center">0.0</p>
+              <p className="text-center">{zUSDBalance.toFixed(2).toString()}</p>
             </div>
             <div className="text-sm ml-3">
               <p className="font-bold">zCFA</p>
-              <p className="text-center">0.0</p>
+              <p className="text-center">{zCFABalance.toFixed(2).toString()}</p>
             </div>
             <div className="text-sm ml-3">
               <p className="font-bold">zNGN</p>
-              <p className="text-center">0.0</p>
+              <p className="text-center">{zNGNBalance.toFixed(2).toString()}</p>
             </div>
             <div className="text-sm ml-3">
               <p className="font-bold">zZAR</p>
-              <p className="text-center">0.0</p>
+              <p className="text-center">{zZARBalance.toFixed(2).toString()}</p>
             </div>
           </div>
         </div>
