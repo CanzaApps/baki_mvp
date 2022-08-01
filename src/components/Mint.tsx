@@ -6,12 +6,15 @@ import AVAX from "../assets/avax.png";
 import USDK from "../assets/usdk.png";
 import ZUSD from "../assets/ZUSD.png";
 import { config } from "../config";
+import { ethers } from "ethers";
+import cUSD from "../contracts/cUSD.json";
 import redstone from "redstone-api";
 import { BiChevronDown } from "react-icons/bi";
 
 import axios from "axios";
 import { updateCollateral } from "../redux/reducers/bakiReducer";
 axios.defaults.baseURL = `https://api.coinlayer.com/api/live?access_key=${config.coinlayerAPIKEY}`;
+declare const window: any;
 
 const MintComponent: FC = (): JSX.Element => {
   const [depositAmount, setDepositAmount] = useState<any>();
@@ -19,9 +22,11 @@ const MintComponent: FC = (): JSX.Element => {
   const { deposit } = useBaki();
   const [isInputOpen, setInputIsOpen] = useState<boolean>(false);
   const [avaxRate, setAvaxRate] = useState<any>(false);
-  const { collateralRatio, totalCollateral, userDebt } = useSelector(
-    (state: any) => state.baki
-  );
+  const [provider, setProvider] = useState<any>(null);
+  const [contract, setContract] = useState<any>(null);
+
+  const { collateralRatio, totalCollateral, userDebt, userAddress } =
+    useSelector((state: any) => state.baki);
   const [collaterals] = useState([
     {
       name: "cUSD",
@@ -41,6 +46,16 @@ const MintComponent: FC = (): JSX.Element => {
   const [selectedInput, setSelectedInput] = useState<string>(
     collaterals[0].name
   );
+  useEffect(() => {
+    setProvider(new ethers.providers.Web3Provider(window.ethereum));
+  }, []);
+  useEffect(() => {
+    if (provider) {
+      const signer = provider.getSigner();
+      setContract(new ethers.Contract(config.cUSD, cUSD, signer));
+    }
+  }, [provider]);
+
   const handleInputSelect = () => {
     setInputIsOpen(!isInputOpen);
   };
@@ -50,9 +65,9 @@ const MintComponent: FC = (): JSX.Element => {
   };
 
   const handleDeposit = async () => {
+    await contract.approve(config.vaultAddress, depositAmount);
     try {
       await deposit(depositAmount, mintAmount);
-
       setDepositAmount(0);
       setMintAmount(0);
     } catch (error) {}

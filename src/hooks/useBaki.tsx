@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { config } from "../config";
 import { useDispatch } from "react-redux";
-import Vault from "../contracts/Vault.json";
+import vault from "../contracts/vault.json";
+import cUSD from "../contracts/cUSD.json";
 import { ethers } from "ethers";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -23,7 +24,6 @@ import {
 } from "../redux/reducers/bakiReducer";
 declare const window: any;
 
-// axios.defaults.baseURL = "https://api.apilayer.com";
 axios.defaults.headers.common["apikey"] = config.exchangeRatesAPIKEY;
 
 const useBaki = () => {
@@ -33,6 +33,7 @@ const useBaki = () => {
   const [provider, setProvider] = useState<any>(null);
   const [contract, setContract] = useState<any>(null);
   const [balances, setBalances] = useState<any>();
+  const [contractName, setContractName] = useState<any>(null);
 
   useEffect(() => {
     setProvider(new ethers.providers.Web3Provider(window.ethereum));
@@ -42,7 +43,7 @@ const useBaki = () => {
   useEffect(() => {
     if (provider) {
       const signer = provider.getSigner();
-      setContract(new ethers.Contract(config.vaultAddress, Vault, signer));
+      setContract(new ethers.Contract(config.vaultAddress, vault, signer));
     }
   }, [provider]);
 
@@ -118,10 +119,13 @@ const useBaki = () => {
 
   const deposit = async (depositAmount: number, mintAmount: number) => {
     try {
-      console.log(depositAmount, mintAmount);
-
-      const result = await contract.depositAndMint(depositAmount, mintAmount);
-
+      const result = await contract?.depositAndMint(
+        depositAmount,
+        mintAmount,
+        415,
+        415,
+        415
+      );
       console.log(result);
     } catch (error) {
       console.log(error);
