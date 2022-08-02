@@ -53,19 +53,27 @@ const Header: FC = () => {
 
             <div className="text-sm ml-3">
               <p className="font-bold">zUSD</p>
-              <p className="text-center">{zUSDBalance.toFixed(2).toString()}</p>
+              <p className="text-center">
+                {zUSDBalance?.toFixed(2).toString()}
+              </p>
             </div>
             <div className="text-sm ml-3">
               <p className="font-bold">zXAF</p>
-              <p className="text-center">{zXAFBalance.toFixed(2).toString()}</p>
+              <p className="text-center">
+                {zXAFBalance?.toFixed(2).toString()}
+              </p>
             </div>
             <div className="text-sm ml-3">
               <p className="font-bold">zNGN</p>
-              <p className="text-center">{zNGNBalance.toFixed(2).toString()}</p>
+              <p className="text-center">
+                {zNGNBalance?.toFixed(2).toString()}
+              </p>
             </div>
             <div className="text-sm ml-3">
               <p className="font-bold">zZAR</p>
-              <p className="text-center">{zZARBalance.toFixed(2).toString()}</p>
+              <p className="text-center">
+                {zZARBalance?.toFixed(2).toString()}
+              </p>
             </div>
           </div>
         </div>

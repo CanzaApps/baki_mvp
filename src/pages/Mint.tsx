@@ -54,8 +54,8 @@ const Mint: FC = (): JSX.Element => {
           {isMint ? <MintComponent /> : <Repay />}
         </div>
         <div>
-          <ClaimReward />
           <Details />
+          <ClaimReward />
         </div>
       </div>
     </MainLayout>

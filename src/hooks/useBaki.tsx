@@ -85,10 +85,10 @@ const useBaki = () => {
       const ZZAR = await contract?.getBalance(config.zZAR);
       const ZNGN = await contract?.getBalance(config.zNGN);
       setBalances({
-        ZUSD: ZUSD.toNumber(),
-        zXAF: zXAF.toNumber(),
-        ZZAR: ZZAR.toNumber(),
-        ZNGN: ZNGN.toNumber(),
+        ZUSD: ZUSD?.toNumber(),
+        zXAF: zXAF?.toNumber(),
+        ZZAR: ZZAR?.toNumber(),
+        ZNGN: ZNGN?.toNumber(),
       });
     } catch (error) {
       console.log(error);

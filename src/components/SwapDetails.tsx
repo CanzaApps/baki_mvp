@@ -41,10 +41,7 @@ const SwapDetails: FC<SwapDetailsProps> = ({ from, to, rate }) => {
             {swapOutput.toFixed(3)} {to}
           </p>
         </div>
-        <div className="flex justify-between px-3">
-          <p>Price Impact</p>
-          <p>0.0%</p>
-        </div>
+
         <div
           style={{
             width: "100%",
@@ -58,17 +55,7 @@ const SwapDetails: FC<SwapDetailsProps> = ({ from, to, rate }) => {
             <small>Liquidity provider fee</small>
           </p>
           <p>
-            <small>0.0%</small>
-          </p>
-        </div>
-        <div className="flex justify-between px-3">
-          <p>
-            <small>Route</small>
-          </p>
-          <p>
-            <small>
-              {from} {">"} {to}
-            </small>
+            <small>0.3%</small>
           </p>
         </div>
       </div>
