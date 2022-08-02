@@ -4,6 +4,7 @@ import MainLayout from "../Layouts/MainLayout";
 import MintComponent from "../components/Mint";
 import Repay from "../components/Repay";
 import Details from "../components/Details";
+import ClaimReward from "../components/ClaimReward";
 
 const Mint: FC = (): JSX.Element => {
   const [isMint, setIsMint] = useState<boolean>(true);
@@ -52,7 +53,10 @@ const Mint: FC = (): JSX.Element => {
           </div>
           {isMint ? <MintComponent /> : <Repay />}
         </div>
-        <Details />
+        <div>
+          <ClaimReward />
+          <Details />
+        </div>
       </div>
     </MainLayout>
   );

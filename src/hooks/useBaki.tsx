@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 import {
   updateZUSDBalance,
   updateZNGNBalance,
-  updateZCFABalance,
+  updatezXAFBalance,
   updateZZARBalance,
   updateUserAddress,
   updateUserNetMint,
@@ -52,7 +52,7 @@ const useBaki = () => {
       dispatch(updateZZARBalance(balances.ZZAR));
       dispatch(updateZUSDBalance(balances.ZUSD));
       dispatch(updateZNGNBalance(balances.ZNGN));
-      dispatch(updateZCFABalance(balances.ZCFA));
+      dispatch(updatezXAFBalance(balances.zXAF));
       getPosition();
     }
   }, [balances]);
@@ -81,12 +81,12 @@ const useBaki = () => {
   const getWalletBalance = async () => {
     try {
       const ZUSD = await contract?.getBalance(config.zUSD);
-      const ZCFA = await contract?.getBalance(config.zCFA);
+      const zXAF = await contract?.getBalance(config.zXAF);
       const ZZAR = await contract?.getBalance(config.zZAR);
       const ZNGN = await contract?.getBalance(config.zNGN);
       setBalances({
         ZUSD: ZUSD.toNumber(),
-        ZCFA: ZCFA.toNumber(),
+        zXAF: zXAF.toNumber(),
         ZZAR: ZZAR.toNumber(),
         ZNGN: ZNGN.toNumber(),
       });
@@ -161,8 +161,8 @@ const useBaki = () => {
     let to = "";
     if (_fromzToken === "zUSD") {
       from = config.zUSD;
-    } else if (_fromzToken === "zCFA") {
-      from = config.zCFA;
+    } else if (_fromzToken === "zXAF") {
+      from = config.zXAF;
     } else if (_fromzToken === "zNGN") {
       from = config.zNGN;
     } else if (_fromzToken === "zZAR") {
@@ -170,8 +170,8 @@ const useBaki = () => {
     }
     if (_tozToken === "zUSD") {
       to = config.zUSD;
-    } else if (_tozToken === "zCFA") {
-      to = config.zCFA;
+    } else if (_tozToken === "zXAF") {
+      to = config.zXAF;
     } else if (_tozToken === "zNGN") {
       to = config.zNGN;
     } else if (_tozToken === "zZAR") {

@@ -4,12 +4,13 @@ import "../styles/pages/Swap.css";
 import axios from "axios";
 import { config } from "../config";
 import MainLayout from "../Layouts/MainLayout";
-import ZCFA from "../assets/ZCFA.png";
+import zXAF from "../assets/ZXAF.png";
 import ZUSD from "../assets/ZUSD.png";
 import ZNGN from "../assets/ZNGN.png";
 import ZZAR from "../assets/ZZAR.png";
 import { useSelector, useDispatch } from "react-redux";
 import { updateSwapOutput } from "../redux/reducers/bakiReducer";
+import SwapDetails from "../components/SwapDetails";
 
 import useBaki from "../hooks/useBaki";
 axios.defaults.headers.common["apikey"] = config.exchangeRatesAPIKEY;
@@ -19,8 +20,8 @@ const Swap: FC = (): JSX.Element => {
   const dispatch = useDispatch();
   const [inputTokens] = useState([
     {
-      name: "zCFA",
-      image: ZCFA,
+      name: "zXAF",
+      image: zXAF,
     },
     {
       name: "zNGN",
@@ -37,8 +38,8 @@ const Swap: FC = (): JSX.Element => {
   ]);
   const [outputTokens] = useState([
     {
-      name: "zCFA",
-      image: ZCFA,
+      name: "zXAF",
+      image: zXAF,
     },
     {
       name: "zNGN",
@@ -64,6 +65,7 @@ const Swap: FC = (): JSX.Element => {
   const [fromAmount, setFromAmount] = useState<any>();
   const [toAmount, setToAmount] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [rate, setRate] = useState<any>();
 
   const handleOutputSelect = () => {
     setOutputIsOpen(!isOutputOpen);
@@ -99,18 +101,22 @@ const Swap: FC = (): JSX.Element => {
         )
         .then((res: any) => {
           if (selectedOutput.substring(1) === "NGN") {
+            setRate(res.data.rates.NGN);
             const output = res.data.rates.NGN * fromAmount;
             dispatch(updateSwapOutput(output));
           }
           if (selectedOutput.substring(1) === "ZAR") {
+            setRate(res.data.rates.ZAR);
             const output = res.data.rates.ZAR * fromAmount;
             dispatch(updateSwapOutput(output));
           }
-          if (selectedOutput.substring(1) === "CFA") {
-            const output = res.data.rates.CFA * fromAmount;
+          if (selectedOutput.substring(1) === "XAF") {
+            setRate(res.data.rates.XAF);
+            const output = res.data.rates.XAF * fromAmount;
             dispatch(updateSwapOutput(output));
           }
           if (selectedOutput.substring(1) === "USD") {
+            setRate(res.data.rates.USD);
             const output = res.data.rates.USD * fromAmount;
             dispatch(updateSwapOutput(output));
           }
@@ -156,6 +162,13 @@ const Swap: FC = (): JSX.Element => {
               />
             </div>
 
+            {fromAmount && (
+              <SwapDetails
+                rate={rate}
+                from={selectedInput}
+                to={selectedOutput}
+              />
+            )}
             <button className="swap-btn" onClick={handleSwap}>
               {loading ? "Loading..." : "Swap"}
             </button>

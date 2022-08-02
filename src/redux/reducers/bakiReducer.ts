@@ -8,7 +8,7 @@ export interface PositionState {
   collateral: String;
   zUSDBalance: number;
   zNGNBalance: number;
-  zCFABalance: number;
+  zXAFBalance: number;
   zZARBalance: number;
   userAddress: String;
   userNetMint: number;
@@ -26,7 +26,7 @@ const initialState: PositionState = {
   collateral: "cUSD",
   zUSDBalance: 0,
   zNGNBalance: 0,
-  zCFABalance: 0,
+  zXAFBalance: 0,
   zZARBalance: 0,
   userAddress: "",
   userNetMint: 0,
@@ -53,8 +53,8 @@ export const bakiSlice = createSlice({
     updateZNGNBalance: (state, action: PayloadAction<number>) => {
       state.zNGNBalance = action.payload;
     },
-    updateZCFABalance: (state, action: PayloadAction<number>) => {
-      state.zCFABalance = action.payload;
+    updatezXAFBalance: (state, action: PayloadAction<number>) => {
+      state.zXAFBalance = action.payload;
     },
     updateZZARBalance: (state, action: PayloadAction<number>) => {
       state.zZARBalance = action.payload;
@@ -98,7 +98,7 @@ export const {
   updateCollateral,
   updateZUSDBalance,
   updateZNGNBalance,
-  updateZCFABalance,
+  updatezXAFBalance,
   updateZZARBalance,
   updateUserAddress,
   updateUserNetMint,

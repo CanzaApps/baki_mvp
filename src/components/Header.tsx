@@ -5,7 +5,7 @@ import { FaUserCircle, FaWallet } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
 const Header: FC = () => {
-  const { zUSDBalance, zNGNBalance, zCFABalance, zZARBalance, userAddress } =
+  const { zUSDBalance, zNGNBalance, zXAFBalance, zZARBalance, userAddress } =
     useSelector((state: any) => state.baki);
 
   const location = useLocation();
@@ -56,8 +56,8 @@ const Header: FC = () => {
               <p className="text-center">{zUSDBalance.toFixed(2).toString()}</p>
             </div>
             <div className="text-sm ml-3">
-              <p className="font-bold">zCFA</p>
-              <p className="text-center">{zCFABalance.toFixed(2).toString()}</p>
+              <p className="font-bold">zXAF</p>
+              <p className="text-center">{zXAFBalance.toFixed(2).toString()}</p>
             </div>
             <div className="text-sm ml-3">
               <p className="font-bold">zNGN</p>

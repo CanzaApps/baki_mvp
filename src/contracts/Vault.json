@@ -44,7 +44,7 @@
                 "type": "address"
             }
         ],
-        "name": "addZCFAAddress",
+        "name": "addzXAFAddress",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -107,7 +107,7 @@
             },
             {
                 "internalType": "uint256",
-                "name": "zCFAUSDRate",
+                "name": "zXAFUSDRate",
                 "type": "uint256"
             },
             {
@@ -383,7 +383,7 @@
             },
             {
                 "internalType": "uint256",
-                "name": "zCFAUSDRate",
+                "name": "zXAFUSDRate",
                 "type": "uint256"
             },
             {
