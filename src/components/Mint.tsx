@@ -74,14 +74,14 @@ const MintComponent: FC = (): JSX.Element => {
   }, [selectedInput]);
 
   const calculateValue = (percentage: number) => {
-    if (collateralRatio !== 0) {
+    if (depositAmount) {
       let colBalance = totalCollateral * 10 ** -18;
       let debt = userDebt * 10 ** -18;
-      let val2 = (colBalance + depositAmount) / collateralRatio - debt;
-      let maxVal = Math.max(0, val2);
+      let colRatio = 1.5 * 10 ** 3;
+      let val2 = (colBalance + depositAmount) / colRatio;
+      let val3 = val2 - debt;
+      let maxVal = Math.max(0, val3);
       setMintAmount(maxVal * percentage);
-    } else {
-      setMintAmount(0);
     }
   };
   return (
