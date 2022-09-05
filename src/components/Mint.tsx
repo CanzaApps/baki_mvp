@@ -77,7 +77,7 @@ const MintComponent: FC = (): JSX.Element => {
     if (depositAmount) {
       let colBalance = totalCollateral * 10 ** -18;
       let debt = userDebt * 10 ** -18;
-      let colRatio = 1.5 * 10 ** 3;
+      let colRatio = 1.5;
       let val2 = (colBalance + depositAmount) / colRatio;
       let val3 = val2 - debt;
       let maxVal = Math.max(0, val3);
