@@ -23,14 +23,6 @@ const Repay: FC = (): JSX.Element => {
       name: "cUSD",
       image: CUSD,
     },
-    {
-      name: "USDK",
-      image: USDK,
-    },
-    {
-      name: "AVAX",
-      image: AVAX,
-    },
   ]);
   const getAvaxRate = async () => {
     const price = await redstone.getPrice("AVAX");
