@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import Mint from "./pages/Mint";
 import Swap from "./pages/Swap";
 import { FC } from "react";
+import Faucet from "./pages/Faucet";
 
 const App: FC = () => {
   return (
@@ -11,6 +12,7 @@ const App: FC = () => {
         <Route path="/" element={<Home />} />
         <Route path="/mint" element={<Mint />} />
         <Route path="/swap" element={<Swap />} />
+        <Route path="/faucet" element={<Faucet />} />
       </Routes>
     </Router>
   );

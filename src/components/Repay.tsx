@@ -97,12 +97,14 @@ const Repay: FC = (): JSX.Element => {
           <div className="p-2">
             <p>Total Collateral</p>
             <p className="font-bold text-center">
-              {totalCollateral.toFixed(2)} <b>{selectedInput}</b>
+              {(totalCollateral * 10 ** -18).toFixed(2)} <b>{selectedInput}</b>
             </p>
           </div>
           <div className="p-2">
             <p>Total Debt</p>
-            <p className="font-bold text-center">{userDebt.toFixed(2)} zUSD</p>
+            <p className="font-bold text-center">
+              {(userDebt * 10 ** -18).toFixed(2)} zUSD
+            </p>
           </div>
           <div className="p-2">
             <p>Collateral Ratio:</p>

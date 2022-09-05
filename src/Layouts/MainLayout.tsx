@@ -6,7 +6,7 @@ interface MainLayoutProps {
 }
 const MainLayout: FC<MainLayoutProps> = ({ children }) => {
   return (
-    <div>
+    <div className="h-screen">
       <Header />
       <div className="w-full flex justify-center items-center pt-10 ">
         {children}

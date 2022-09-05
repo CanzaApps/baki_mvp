@@ -11,7 +11,7 @@ export interface PositionState {
   zXAFBalance: number;
   zZARBalance: number;
   userAddress: String;
-  userNetMint: number;
+  userNetMint: any;
   globalNetMint: number;
   globalDebt: number;
   userShare: number;
@@ -62,7 +62,7 @@ export const bakiSlice = createSlice({
     updateUserAddress: (state, action: PayloadAction<string>) => {
       state.userAddress = action.payload;
     },
-    updateUserNetMint: (state, action: PayloadAction<number>) => {
+    updateUserNetMint: (state, action: PayloadAction<any>) => {
       state.userNetMint = action.payload;
     },
     updateGlobalNetMint: (state, action: PayloadAction<number>) => {

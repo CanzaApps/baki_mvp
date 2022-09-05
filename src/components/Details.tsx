@@ -18,7 +18,7 @@ const Details: FC = (): JSX.Element => {
 
       <div className="flex justify-between px-3">
         <p>{collateral}</p>
-        <p>${totalCollateral.toFixed(2)}</p>
+        <p>${(totalCollateral * 10 ** -18).toFixed(2)}</p>
       </div>
       <div
         style={{
@@ -32,23 +32,25 @@ const Details: FC = (): JSX.Element => {
       <p className="px-3 font-bold mt-5">Outstanding zUSD Debt</p>
       <div className="flex justify-between px-3">
         <p>User Net Mint</p>
-        <p>${userNetMint.toFixed(2)}</p>
+        <p>${(userNetMint * 10 ** -18).toFixed(2)}</p>
       </div>
       <div className="flex justify-between px-3">
         <p>Global Net Mint</p>
-        <p>${globalNetMint.toFixed(2)}</p>
+        <p>${(globalNetMint * 10 ** -18).toFixed(2)}</p>
       </div>
       <div className="flex justify-between px-3">
         <p>Global Debt</p>
-        <p>${globalDebt.toFixed(2)}</p>
+        <p>${(globalDebt * 10 ** -18).toFixed(2)}</p>
       </div>
       <div className="flex justify-between px-3">
         <p>User Share</p>
-        <p>{userShare.toFixed(2)}%</p>
+        <p>
+          {userNetMint ? (userNetMint / globalNetMint).toFixed(2) : "0.00%"}
+        </p>
       </div>
       <div className="flex justify-between px-3">
         <p>User Debt</p>
-        <p>${userDebt.toFixed(2)}</p>
+        <p>${(userDebt * 10 ** -18).toFixed(2)}</p>
       </div>
     </div>
   );

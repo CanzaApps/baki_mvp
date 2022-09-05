@@ -85,7 +85,9 @@ const Swap: FC = (): JSX.Element => {
     if (selectedInput !== selectedOutput) {
       // get rates
       if (!loading) {
-        swap(fromAmount, selectedInput, selectedOutput);
+        setLoading(true);
+        await swap(fromAmount, selectedInput, selectedOutput, rate, rate);
+        setLoading(false);
       }
     }
   };
@@ -93,31 +95,26 @@ const Swap: FC = (): JSX.Element => {
   useEffect(() => {
     if (fromAmount) {
       setLoading(true);
-      axios
-        .get(
-          `https://api.apilayer.com/exchangerates_data/latest?symbols=${selectedOutput.substring(
-            1
-          )}&base=${selectedInput.substring(1)}`
-        )
-        .then((res: any) => {
+      getRates(selectedOutput.substring(1), selectedInput.substring(1))
+        .then((result: any) => {
           if (selectedOutput.substring(1) === "NGN") {
-            setRate(res.data.rates.NGN);
-            const output = res.data.rates.NGN * fromAmount;
+            setRate(result.NGN);
+            const output = result.NGN * fromAmount;
             dispatch(updateSwapOutput(output));
           }
           if (selectedOutput.substring(1) === "ZAR") {
-            setRate(res.data.rates.ZAR);
-            const output = res.data.rates.ZAR * fromAmount;
+            setRate(result.ZAR);
+            const output = result.ZAR * fromAmount;
             dispatch(updateSwapOutput(output));
           }
           if (selectedOutput.substring(1) === "XAF") {
-            setRate(res.data.rates.XAF);
-            const output = res.data.rates.XAF * fromAmount;
+            setRate(result.XAF);
+            const output = result.XAF * fromAmount;
             dispatch(updateSwapOutput(output));
           }
           if (selectedOutput.substring(1) === "USD") {
-            setRate(res.data.rates.USD);
-            const output = res.data.rates.USD * fromAmount;
+            setRate(result.USD);
+            const output = result.USD * fromAmount;
             dispatch(updateSwapOutput(output));
           }
           setLoading(false);

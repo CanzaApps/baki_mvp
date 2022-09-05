@@ -32,15 +32,6 @@ const MintComponent: FC = (): JSX.Element => {
       name: "cUSD",
       image: CUSD,
     },
-    {
-      name: "USDK",
-      image: USDK,
-    },
-
-    {
-      name: "AVAX",
-      image: AVAX,
-    },
   ]);
 
   const [selectedInput, setSelectedInput] = useState<string>(
@@ -65,7 +56,10 @@ const MintComponent: FC = (): JSX.Element => {
   };
 
   const handleDeposit = async () => {
-    await contract.approve(config.vaultAddress, depositAmount);
+    const multiple = 10 ** 18;
+    let amount = BigInt(JSON.stringify(depositAmount * multiple));
+
+    await contract.approve(config.vaultAddress, amount);
     try {
       await deposit(depositAmount, mintAmount);
       setDepositAmount(0);
@@ -116,10 +110,10 @@ const MintComponent: FC = (): JSX.Element => {
           </div>
         </div>
         <div className="flex justify-around">
-          <button className="w-1/3 mx-1 chip">15 %</button>
-          <button className="w-1/3 mx-1 chip">30 %</button>
+          <button className="w-1/3 mx-1 chip">10 %</button>
+          <button className="w-1/3 mx-1 chip">25 %</button>
           <button className="w-1/3 mx-1 chip">50 %</button>
-          <button className="w-1/3 mx-1 chip">65 %</button>
+          <button className="w-1/3 mx-1 chip">75 %</button>
           <div className="chip">
             <input
               type="text"
@@ -137,12 +131,14 @@ const MintComponent: FC = (): JSX.Element => {
           <div className="p-2">
             <p>Total Collateral</p>
             <p className="font-bold text-center">
-              {totalCollateral.toFixed(2)} <b>{selectedInput}</b>
+              {(totalCollateral * 10 ** -18).toFixed(2)} <b>{selectedInput}</b>
             </p>
           </div>
           <div className="p-2">
             <p>Total Debt</p>
-            <p className="font-bold text-center">{userDebt.toFixed(2)} zUSD</p>
+            <p className="font-bold text-center">
+              {(userDebt * 10 ** -18).toFixed(2)} zUSD
+            </p>
           </div>
           <div className="p-2">
             <p>Collateral Ratio:</p>
@@ -220,7 +216,7 @@ const SelectCollateral: FC<Props> = ({
       <div
         style={{
           transition: "all 0.3s ease-in-out",
-          height: isOpen ? 140 : 0,
+          height: isOpen ? 50 : 0,
         }}
       >
         {tokens.map((token: any) => (
