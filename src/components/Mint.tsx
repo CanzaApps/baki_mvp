@@ -72,6 +72,18 @@ const MintComponent: FC = (): JSX.Element => {
       getAvaxRate();
     }
   }, [selectedInput]);
+
+  const calculateValue = (percentage: number) => {
+    if (collateralRatio !== 0) {
+      let colBalance = totalCollateral * 10 ** -18;
+      let debt = userDebt * 10 ** -18;
+      let val2 = (colBalance + depositAmount) / collateralRatio - debt;
+      let maxVal = Math.max(0, val2);
+      setMintAmount(maxVal * percentage);
+    } else {
+      setMintAmount(0);
+    }
+  };
   return (
     <div className=" w-95 shadow-md rounded-lg mt-7">
       <div className="p-2 w-full justify-center items-center rounded-lg">
@@ -110,10 +122,30 @@ const MintComponent: FC = (): JSX.Element => {
           </div>
         </div>
         <div className="flex justify-around">
-          <button className="w-1/3 mx-1 chip">10 %</button>
-          <button className="w-1/3 mx-1 chip">25 %</button>
-          <button className="w-1/3 mx-1 chip">50 %</button>
-          <button className="w-1/3 mx-1 chip">75 %</button>
+          <button
+            className="w-1/3 mx-1 chip"
+            onClick={() => calculateValue(10 / 100)}
+          >
+            10 %
+          </button>
+          <button
+            className="w-1/3 mx-1 chip"
+            onClick={() => calculateValue(25 / 100)}
+          >
+            25 %
+          </button>
+          <button
+            className="w-1/3 mx-1 chip"
+            onClick={() => calculateValue(50 / 100)}
+          >
+            50 %
+          </button>
+          <button
+            className="w-1/3 mx-1 chip"
+            onClick={() => calculateValue(75 / 100)}
+          >
+            75 %
+          </button>
           <div className="chip">
             <input
               type="text"
@@ -123,6 +155,7 @@ const MintComponent: FC = (): JSX.Element => {
                 backgroundColor: "transparent",
                 border: "none",
               }}
+              onChange={e => calculateValue(Number(e.target.value) / 100)}
             />
             %
           </div>
