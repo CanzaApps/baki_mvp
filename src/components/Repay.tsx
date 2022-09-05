@@ -173,7 +173,7 @@ const SelectCollateral: FC<Props> = ({
       <div
         style={{
           transition: "all 0.3s ease-in-out",
-          height: isOpen ? 140 : 0,
+          height: isOpen ? 50 : 0,
         }}
       >
         {tokens.map((token: any, index: number) => (
