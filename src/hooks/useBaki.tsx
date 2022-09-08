@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { config } from "../config";
 import { useDispatch } from "react-redux";
 import vault from "../contracts/vault.json";
-import cUSD from "../contracts/cUSD.json";
+// import cUSD from "../contracts/cUSD.json";
 import { ethers } from "ethers";
 import axios from "axios";
 import { useSelector } from "react-redux";
