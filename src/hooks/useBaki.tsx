@@ -219,13 +219,14 @@ const useBaki = () => {
     let zTokenToUSDRate = await getRates(_tozToken.substring(1));
 
     try {
-      await contract.swap(
+      const result = await contract.swap(
         Number(_amount),
         from,
         to,
         Math.floor(Number(zTokenFromUSDRate[_fromzToken.substring(1)])),
         Math.floor(Number(zTokenToUSDRate[_tozToken.substring(1)]))
       );
+
       window.location.reload();
       alert("Transaction was successfully !!");
     } catch (error) {
