@@ -12,7 +12,12 @@ const Details: FC = (): JSX.Element => {
     totalCollateral,
   } = useSelector((state: any) => state.baki);
   return (
-    <div className="w-96 shadow-md mint-details p-2 ml-5">
+    <div
+      className="w-96 shadow-md mint-details p-2 ml-5"
+      style={{
+        backgroundColor: "#f3f4f4",
+      }}
+    >
       <p className="font-bold text-xl ">Open Position</p>
       <p className="px-3 font-bold mt-5">Current User Collateral</p>
 

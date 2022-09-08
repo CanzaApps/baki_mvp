@@ -20,13 +20,13 @@ const Mint: FC = (): JSX.Element => {
           <div className="flex justify-around px-3">
             <button
               style={{
-                backgroundColor: isMint ? "#fb5f33" : "#ccc",
+                backgroundColor: isMint ? "#ffdbc9" : "#f3f4f4",
                 border: "1px solid #f5f5f5",
                 padding: "5px",
                 borderRadius: "10px",
-                fontSize: "12px",
+                fontSize: "20px",
                 fontWeight: "bold",
-                color: isMint ? "#fff" : "#000",
+                color: "#6e7880",
                 width: "50%",
                 transition: "all 0.3s ease-in-out",
               }}
@@ -36,13 +36,13 @@ const Mint: FC = (): JSX.Element => {
             </button>
             <button
               style={{
-                backgroundColor: !isMint ? "#fb5f33" : "#ccc",
+                backgroundColor: !isMint ? "#ffdbc9" : "#f3f4f4",
                 border: "1px solid #f5f5f5",
                 padding: "5px",
                 borderRadius: "10px",
-                fontSize: "12px",
+                fontSize: "20px",
                 fontWeight: "bold",
-                color: !isMint ? "#fff" : "#000",
+                color: "#6e7880",
                 width: "50%",
                 transition: "all 0.3s ease-in-out",
               }}

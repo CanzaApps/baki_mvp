@@ -44,6 +44,6 @@ export const config: any = {
       blockExplorerUrls: ["https://explorer.avax.network/"],
     },
   },
-  exchangeRatesAPIKEY: "jlv8wq9FomD9CdRDAYl2XwZpSpxvXxBi",
+  exchangeRatesAPIKEY: "RPGQctIVDY8a27eDUSB3i8BU4qGdqqMM",
   coinlayerAPIKEY: "49505e855f2ab02b59638b6895755f23",
 };

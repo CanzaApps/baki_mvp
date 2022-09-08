@@ -11,9 +11,11 @@ import ZZAR from "../assets/ZZAR.png";
 import { useSelector, useDispatch } from "react-redux";
 import { updateSwapOutput } from "../redux/reducers/bakiReducer";
 import SwapDetails from "../components/SwapDetails";
-
+import { ethers } from "ethers";
 import useBaki from "../hooks/useBaki";
+import zToken from "../contracts/zToken.json";
 axios.defaults.headers.common["apikey"] = config.exchangeRatesAPIKEY;
+declare const window: any;
 
 const Swap: FC = (): JSX.Element => {
   const { swap } = useBaki();
@@ -54,6 +56,8 @@ const Swap: FC = (): JSX.Element => {
       image: ZZAR,
     },
   ]);
+  const [provider, setProvider] = useState<any>(null);
+  const [contract, setContract] = useState<any>(null);
   const [isOutputOpen, setOutputIsOpen] = useState<boolean>(false);
   const [isInputOpen, setInputIsOpen] = useState<boolean>(false);
   const [selectedInput, setSelectedInput] = useState<string>(
@@ -67,6 +71,26 @@ const Swap: FC = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false);
   const [rate, setRate] = useState<any>();
 
+  useEffect(() => {
+    setProvider(new ethers.providers.Web3Provider(window.ethereum));
+  }, []);
+  useEffect(() => {
+    if (provider) {
+      const signer = provider.getSigner();
+      let from = "";
+      if (selectedInput === "zUSD") {
+        from = config.zUSD;
+      } else if (selectedInput === "zXAF") {
+        from = config.zXAF;
+      } else if (selectedInput === "zNGN") {
+        from = config.zNGN;
+      } else if (selectedInput === "zZAR") {
+        from = config.zZAR;
+      }
+
+      setContract(new ethers.Contract(from, zToken, signer));
+    }
+  }, [provider, selectedInput]);
   const handleOutputSelect = () => {
     setOutputIsOpen(!isOutputOpen);
   };
@@ -76,17 +100,21 @@ const Swap: FC = (): JSX.Element => {
 
   const getRates = async (base: string, target: string) => {
     const result = await axios.get(
-      `https://api.apilayer.com/exchangerates_data/latest?symbols=${target}base=${base}`
+      `https://api.apilayer.com/exchangerates_data/latest?symbols=${target}&base=${base}`
     );
     return result.data.rates;
   };
 
   const handleSwap = async () => {
     if (selectedInput !== selectedOutput) {
-      // get rates
       if (!loading) {
         setLoading(true);
-        await swap(fromAmount, selectedInput, selectedOutput, rate, rate);
+        // Approve
+        const multiple = 10 ** 18;
+        let _amount = BigInt(JSON.stringify(Math.floor(fromAmount) * multiple));
+        await contract.approve(config.vaultAddress, _amount);
+
+        await swap(Math.floor(fromAmount), selectedInput, selectedOutput);
         setLoading(false);
       }
     }
@@ -95,7 +123,7 @@ const Swap: FC = (): JSX.Element => {
   useEffect(() => {
     if (fromAmount) {
       setLoading(true);
-      getRates(selectedOutput.substring(1), selectedInput.substring(1))
+      getRates(selectedInput.substring(1), selectedOutput.substring(1))
         .then((result: any) => {
           if (selectedOutput.substring(1) === "NGN") {
             setRate(result.NGN);

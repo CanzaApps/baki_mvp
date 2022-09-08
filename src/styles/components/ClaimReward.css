@@ -2,10 +2,10 @@
   margin-top: 20px;
   height: 50px;
   width: 100%;
-  background-color: #fb5f33;
+  background-color: #fee2e2;
   padding: 10px;
   border-radius: 10px;
-  color: #fff;
+  color: #000;
   font-weight: bold;
   transition: all 0.3s ease-in-out;
   display: flex;
@@ -18,12 +18,12 @@
 }
 
 .claim-detail {
-  background-color: #e35c3a;
+  background-color: #f3f4f4;
   border-radius: 10px;
-  color: white;
+  color: #6e7880;
 }
 
 .detail {
-  background-color: #d3dcfc;
+  background-color: #f3f4f4;
   border-radius: 10px;
 }

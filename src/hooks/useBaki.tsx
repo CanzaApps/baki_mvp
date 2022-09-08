@@ -189,12 +189,11 @@ const useBaki = () => {
   const swap = async (
     _amount: number,
     _fromzToken: string,
-    _tozToken: string,
-    _fromUSDRate: number,
-    _toUSDRate: number
+    _tozToken: string
   ) => {
     let from = "";
     let to = "";
+
     if (_fromzToken === "zUSD") {
       from = config.zUSD;
     } else if (_fromzToken === "zXAF") {
@@ -213,18 +212,26 @@ const useBaki = () => {
     } else if (_tozToken === "zZAR") {
       to = config.zZAR;
     }
+
+    // Get zToken from USD rate
+    let zTokenFromUSDRate = await getRates(_fromzToken.substring(1));
+    // Get zToken to USD rate
+    let zTokenToUSDRate = await getRates(_tozToken.substring(1));
+
     try {
-      const result = await contract.swap(_amount, from, to, 415, 415);
-      console.log(result);
+      await contract.swap(
+        Number(_amount),
+        from,
+        to,
+        Math.floor(Number(zTokenFromUSDRate[_fromzToken.substring(1)])),
+        Math.floor(Number(zTokenToUSDRate[_tozToken.substring(1)]))
+      );
+      window.location.reload();
       alert("Transaction was successfully !!");
     } catch (error) {
       console.error(error);
       alert("Transaction failed !!");
     }
-
-    // getRates().then(rates => {
-    //   console.log(rates);
-    // });
   };
 
   return {

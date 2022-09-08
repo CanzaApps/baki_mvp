@@ -24,7 +24,7 @@ const MintComponent: FC = (): JSX.Element => {
   const [avaxRate, setAvaxRate] = useState<any>(false);
   const [provider, setProvider] = useState<any>(null);
   const [contract, setContract] = useState<any>(null);
-
+  const [loading, setLoading] = useState<boolean>(false);
   const { collateralRatio, totalCollateral, userDebt, userAddress } =
     useSelector((state: any) => state.baki);
   const [collaterals] = useState([
@@ -56,15 +56,19 @@ const MintComponent: FC = (): JSX.Element => {
   };
 
   const handleDeposit = async () => {
-    const multiple = 10 ** 18;
-    let amount = BigInt(JSON.stringify(depositAmount * multiple));
+    if (depositAmount && mintAmount) {
+      setLoading(true);
+      const multiple = 10 ** 18;
+      let amount = BigInt(JSON.stringify(depositAmount * multiple));
 
-    await contract.approve(config.vaultAddress, amount);
-    try {
-      await deposit(depositAmount, mintAmount);
-      setDepositAmount(0);
-      setMintAmount(0);
-    } catch (error) {}
+      await contract.approve(config.vaultAddress, amount);
+      try {
+        await deposit(depositAmount, mintAmount);
+        setDepositAmount(0);
+        setMintAmount(0);
+        setLoading(false);
+      } catch (error) {}
+    }
   };
 
   useEffect(() => {
@@ -75,11 +79,12 @@ const MintComponent: FC = (): JSX.Element => {
 
   const calculateValue = (percentage: number) => {
     if (depositAmount) {
-      let colBalance = totalCollateral * 10 ** -18;
+      let colBalance: any = totalCollateral * 10 ** -18;
       let debt = userDebt * 10 ** -18;
       let colRatio = 1.5;
-      let val2 = (colBalance + depositAmount) / colRatio;
+      let val2 = (colBalance + Number(depositAmount)) / colRatio;
       let val3 = val2 - debt;
+
       let maxVal = Math.max(0, val3);
       setMintAmount(maxVal * percentage);
     }
@@ -188,7 +193,7 @@ const MintComponent: FC = (): JSX.Element => {
           </p>
         </div>
         <button className="mint-btn" onClick={handleDeposit}>
-          Deposit & Mint
+          {loading ? "Loading..." : "Deposit & Mint"}
         </button>
       </div>
     </div>
@@ -273,4 +278,4 @@ const SelectCollateral: FC<Props> = ({
 
 export default MintComponent;
 
-// http://api.coinlayer.com/api/live?access_key=49505e855f2ab02b59638b6895755f23&symbols=BTC,ETH
+// http://api.coinlayer.com/api/live?access_key=RPGQctIVDY8a27eDUSB3i8BU4qGdqqMM&symbols=BTC,ETH

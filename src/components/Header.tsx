@@ -11,7 +11,12 @@ const Header: FC = () => {
 
   return (
     <>
-      <div className="w-full flex justify-center bg-red-200">
+      <div
+        className="w-full flex justify-center bg-red-200"
+        style={{
+          backgroundColor: "#f97f41",
+        }}
+      >
         <p>
           <b> 😄 Get test cUSD from the Baki Faucet 👉</b>
         </p>
