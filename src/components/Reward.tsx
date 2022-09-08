@@ -1,7 +1,7 @@
 import { FC } from "react";
 import "../styles/components/ClaimReward.css";
 
-const ClaimReward: FC = () => {
+const Reward: FC = () => {
   return (
     <div className="shadow-md p-2 ml-5 mb-3 mt-4">
       <div className="mb-3">
@@ -25,4 +25,4 @@ const ClaimReward: FC = () => {
   );
 };
 
-export default ClaimReward;
+export default Reward;
