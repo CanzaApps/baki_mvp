@@ -5,6 +5,83 @@
         "type": "constructor"
     },
     {
+        "inputs": [],
+        "name": "BurnFailed",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "MintFailed",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "TransferFailed",
+        "type": "error"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "_account",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "_token",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "_depositAmount",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "_mintAmount",
+                "type": "uint256"
+            }
+        ],
+        "name": "Deposit",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "_account",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "debt",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "rewards",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "liquidator",
+                "type": "address"
+            }
+        ],
+        "name": "Liquidate",
+        "type": "event"
+    },
+    {
         "anonymous": false,
         "inputs": [
             {
@@ -22,6 +99,88 @@
         ],
         "name": "OwnershipTransferred",
         "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "_account",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "_zTokenFrom",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "_zTokenTo",
+                "type": "address"
+            }
+        ],
+        "name": "Swap",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "_account",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "_token",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "_amountToRepay",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "_amountToWithdraw",
+                "type": "uint256"
+            }
+        ],
+        "name": "Withdraw",
+        "type": "event"
+    },
+    {
+        "inputs": [],
+        "name": "COLLATERIZATION_RATIO_THRESHOLD",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "LIQUIDATION_REWARD",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
     },
     {
         "inputs": [
@@ -92,45 +251,6 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "rate",
-                "type": "uint256"
-            }
-        ],
-        "name": "changezCFAzUSDRate",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "rate",
-                "type": "uint256"
-            }
-        ],
-        "name": "changezNGNzUSDRate",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "rate",
-                "type": "uint256"
-            }
-        ],
-        "name": "changezZARzUSDRate",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
                 "name": "_depositAmount",
                 "type": "uint256"
             },
@@ -138,11 +258,45 @@
                 "internalType": "uint256",
                 "name": "_mintAmount",
                 "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zNGNUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zCFAUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zZARUSDRate",
+                "type": "uint256"
             }
         ],
-        "name": "deposit",
+        "name": "depositAndMint",
         "outputs": [],
         "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_token",
+                "type": "address"
+            }
+        ],
+        "name": "getBalance",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -159,13 +313,7 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_tokenAddress",
-                "type": "address"
-            }
-        ],
+        "inputs": [],
         "name": "getNetGlobalMintValue",
         "outputs": [
             {
@@ -182,11 +330,6 @@
             {
                 "internalType": "address",
                 "name": "_address",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "_tokenAddress",
                 "type": "address"
             }
         ],
@@ -234,86 +377,73 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "getUserDebtOutstanding",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "globalMintersFee",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_user",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zNGNUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zCFAUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zZARUSDRate",
+                "type": "uint256"
+            }
+        ],
+        "name": "liquidate",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_netMintUserzUSDValue",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_netMintGlobalzUSDValue",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "totalSupply",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "USDSupply",
-                "type": "uint256"
-            }
-        ],
-        "name": "getUserDebtOutstanding",
-        "outputs": [
-            {
-                "internalType": "uint256",
                 "name": "",
                 "type": "uint256"
             }
         ],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getUserDebtOutstanding",
+        "name": "mintersAddresses",
         "outputs": [
             {
-                "internalType": "uint256",
+                "internalType": "address",
                 "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getzCFAzUSDRate",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getzNGNzUSDRate",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "getzZARzUSDRate",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
+                "type": "address"
             }
         ],
         "stateMutability": "view",
@@ -358,18 +488,27 @@
             },
             {
                 "internalType": "uint256",
-                "name": "exchangeRate",
+                "name": "_zTokenUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zNGNUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zCFAUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zZARUSDRate",
                 "type": "uint256"
             }
         ],
         "name": "repayAndWithdraw",
-        "outputs": [
-            {
-                "internalType": "string",
-                "name": "",
-                "type": "string"
-            }
-        ],
+        "outputs": [],
         "stateMutability": "payable",
         "type": "function"
     },
@@ -382,17 +521,22 @@
             },
             {
                 "internalType": "address",
-                "name": "_fromzToken",
+                "name": "_zTokenFrom",
                 "type": "address"
             },
             {
                 "internalType": "address",
-                "name": "_tozToken",
+                "name": "_zTokenTo",
                 "type": "address"
             },
             {
                 "internalType": "uint256",
-                "name": "exchangeRate",
+                "name": "_zTokenFromUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_zTokenToUSDRate",
                 "type": "uint256"
             }
         ],
@@ -412,6 +556,32 @@
         "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "treasuryFee",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "viewMintersAddress",
+        "outputs": [
+            {
+                "internalType": "address[]",
+                "name": "",
+                "type": "address[]"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     }
 ]

@@ -1,0 +1,10 @@
+.swap-detail {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 10px;
+  border-radius: 0.5rem;
+  background-color: #d3dcfc;
+  margin-top: 10px;
+  transition: all 0.3s ease-in-out;
+}

@@ -1,12 +1,13 @@
 export const config: any = {
   celoMainnetChainID: 42220,
   alfajoresChainID: 44787,
-  vaultAddress: "0x198Acc272A58884541cC020D86a80Af4b83E8303",
-  zUSD: "0xebf9897298CA091d7eCdFDC9319c9d83Dc074422",
-  zNGN: "0x708A3a6d8cb50a51A76A7318EAE0023A0c1629B4",
-  zCFA: "0xc487269508DcCd9b591AD25D4C1e31dFad553C7F",
-  zZAR: "0x9204DE3eA0009CC54D01B193cc68E9a7DfacA036",
-  cUSD: "0xa93B20218175918B750f8bd39E5B28426DFA846b",
+  vaultAddress: "0xA5d2f2AE7bd05fF9A66f4e3c8E67Ee785fa43518",
+  faucetAddress: "0x30702c6A7BB9dd7cC812EFf62F26f76e36DC5A33",
+  zUSD: "0x5Caf144a0076cF961f5004Afa96889CA9CAb1fb2",
+  zNGN: "0x440b250627C5aC09f2927820a7611B7402bC204A",
+  zXAF: "0x2d550bBfcFDa2399A1A1C19E500E58a7C50a8739",
+  zZAR: "0x36714d4Ba0df63407f31f043Fa3BCF3dABEcFA78",
+  cUSD: "0x072BdcfAae4E2292eEc87B67189d495983dd80ca",
   networks: {
     cUSD: {
       chainId: `0x${Number(44787).toString(16)}`,
@@ -43,6 +44,6 @@ export const config: any = {
       blockExplorerUrls: ["https://explorer.avax.network/"],
     },
   },
-  exchangeRatesAPIKEY: "jlv8wq9FomD9CdRDAYl2XwZpSpxvXxBi",
+  exchangeRatesAPIKEY: "RPGQctIVDY8a27eDUSB3i8BU4qGdqqMM",
   coinlayerAPIKEY: "49505e855f2ab02b59638b6895755f23",
 };

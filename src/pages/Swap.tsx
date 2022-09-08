@@ -1,20 +1,29 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import "../styles/pages/Swap.css";
+import axios from "axios";
+import { config } from "../config";
 import MainLayout from "../Layouts/MainLayout";
-import ZCFA from "../assets/ZCFA.png";
+import zXAF from "../assets/ZXAF.png";
 import ZUSD from "../assets/ZUSD.png";
 import ZNGN from "../assets/ZNGN.png";
 import ZZAR from "../assets/ZZAR.png";
-
+import { useSelector, useDispatch } from "react-redux";
+import { updateSwapOutput } from "../redux/reducers/bakiReducer";
+import SwapDetails from "../components/SwapDetails";
+import { ethers } from "ethers";
 import useBaki from "../hooks/useBaki";
+import zToken from "../contracts/zToken.json";
+axios.defaults.headers.common["apikey"] = config.exchangeRatesAPIKEY;
+declare const window: any;
 
 const Swap: FC = (): JSX.Element => {
   const { swap } = useBaki();
+  const dispatch = useDispatch();
   const [inputTokens] = useState([
     {
-      name: "zCFA",
-      image: ZCFA,
+      name: "zXAF",
+      image: zXAF,
     },
     {
       name: "zNGN",
@@ -31,8 +40,8 @@ const Swap: FC = (): JSX.Element => {
   ]);
   const [outputTokens] = useState([
     {
-      name: "zCFA",
-      image: ZCFA,
+      name: "zXAF",
+      image: zXAF,
     },
     {
       name: "zNGN",
@@ -47,6 +56,8 @@ const Swap: FC = (): JSX.Element => {
       image: ZZAR,
     },
   ]);
+  const [provider, setProvider] = useState<any>(null);
+  const [contract, setContract] = useState<any>(null);
   const [isOutputOpen, setOutputIsOpen] = useState<boolean>(false);
   const [isInputOpen, setInputIsOpen] = useState<boolean>(false);
   const [selectedInput, setSelectedInput] = useState<string>(
@@ -57,7 +68,29 @@ const Swap: FC = (): JSX.Element => {
   );
   const [fromAmount, setFromAmount] = useState<any>();
   const [toAmount, setToAmount] = useState<any>();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [rate, setRate] = useState<any>();
 
+  useEffect(() => {
+    setProvider(new ethers.providers.Web3Provider(window.ethereum));
+  }, []);
+  useEffect(() => {
+    if (provider) {
+      const signer = provider.getSigner();
+      let from = "";
+      if (selectedInput === "zUSD") {
+        from = config.zUSD;
+      } else if (selectedInput === "zXAF") {
+        from = config.zXAF;
+      } else if (selectedInput === "zNGN") {
+        from = config.zNGN;
+      } else if (selectedInput === "zZAR") {
+        from = config.zZAR;
+      }
+
+      setContract(new ethers.Contract(from, zToken, signer));
+    }
+  }, [provider, selectedInput]);
   const handleOutputSelect = () => {
     setOutputIsOpen(!isOutputOpen);
   };
@@ -65,13 +98,60 @@ const Swap: FC = (): JSX.Element => {
     setInputIsOpen(!isInputOpen);
   };
 
+  const getRates = async (base: string, target: string) => {
+    const result = await axios.get(
+      `https://api.apilayer.com/exchangerates_data/latest?symbols=${target}&base=${base}`
+    );
+    return result.data.rates;
+  };
+
   const handleSwap = async () => {
-    swap(1, "zCFA", "zNGN");
     if (selectedInput !== selectedOutput) {
-      if (fromAmount && toAmount) {
+      if (!loading) {
+        setLoading(true);
+        // Approve
+        const multiple = 10 ** 18;
+        let _amount = BigInt(JSON.stringify(Math.floor(fromAmount) * multiple));
+        await contract.approve(config.vaultAddress, _amount);
+
+        await swap(Math.floor(fromAmount), selectedInput, selectedOutput);
+        setLoading(false);
       }
     }
   };
+
+  useEffect(() => {
+    if (fromAmount) {
+      setLoading(true);
+      getRates(selectedInput.substring(1), selectedOutput.substring(1))
+        .then((result: any) => {
+          if (selectedOutput.substring(1) === "NGN") {
+            setRate(result.NGN);
+            const output = result.NGN * fromAmount;
+            dispatch(updateSwapOutput(output));
+          }
+          if (selectedOutput.substring(1) === "ZAR") {
+            setRate(result.ZAR);
+            const output = result.ZAR * fromAmount;
+            dispatch(updateSwapOutput(output));
+          }
+          if (selectedOutput.substring(1) === "XAF") {
+            setRate(result.XAF);
+            const output = result.XAF * fromAmount;
+            dispatch(updateSwapOutput(output));
+          }
+          if (selectedOutput.substring(1) === "USD") {
+            setRate(result.USD);
+            const output = result.USD * fromAmount;
+            dispatch(updateSwapOutput(output));
+          }
+          setLoading(false);
+        })
+        .catch(() => {
+          setLoading(false);
+        });
+    }
+  }, [fromAmount, selectedOutput, selectedInput]);
 
   return (
     <MainLayout>
@@ -107,8 +187,15 @@ const Swap: FC = (): JSX.Element => {
               />
             </div>
 
+            {fromAmount && (
+              <SwapDetails
+                rate={rate}
+                from={selectedInput}
+                to={selectedOutput}
+              />
+            )}
             <button className="swap-btn" onClick={handleSwap}>
-              Swap
+              {loading ? "Loading..." : "Swap"}
             </button>
           </div>
         </div>
@@ -139,6 +226,7 @@ const SelectOutput: FC<Props> = ({
 }): JSX.Element => {
   const [selectedTokenImg, setSelectedTokenImg] = useState<any>("");
 
+  const { swapOutput } = useSelector((state: any) => state.baki);
   const select = (_token: any) => {
     setSelectedToken(_token.name);
     setSelectedTokenImg(_token.image);
@@ -151,8 +239,7 @@ const SelectOutput: FC<Props> = ({
           type="text"
           placeholder="0.0"
           className="w-full focus:outline-none"
-          value={value}
-          onChange={(e): void => setValue(e.target.value)}
+          value={swapOutput}
         />
 
         <div className="flex cursor-pointer" onClick={handleSelect}>

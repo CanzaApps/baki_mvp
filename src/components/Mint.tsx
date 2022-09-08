@@ -1,41 +1,52 @@
 import { FC, useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import CUSD from "../assets/cUSD.png";
 import useBaki from "../hooks/useBaki";
 import AVAX from "../assets/avax.png";
 import USDK from "../assets/usdk.png";
 import ZUSD from "../assets/ZUSD.png";
 import { config } from "../config";
+import { ethers } from "ethers";
+import cUSD from "../contracts/cUSD.json";
 import redstone from "redstone-api";
 import { BiChevronDown } from "react-icons/bi";
 
 import axios from "axios";
+import { updateCollateral } from "../redux/reducers/bakiReducer";
 axios.defaults.baseURL = `https://api.coinlayer.com/api/live?access_key=${config.coinlayerAPIKEY}`;
+declare const window: any;
 
 const MintComponent: FC = (): JSX.Element => {
   const [depositAmount, setDepositAmount] = useState<any>();
   const [mintAmount, setMintAmount] = useState<any>();
-  const { deposit, mint } = useBaki();
+  const { deposit } = useBaki();
   const [isInputOpen, setInputIsOpen] = useState<boolean>(false);
   const [avaxRate, setAvaxRate] = useState<any>(false);
+  const [provider, setProvider] = useState<any>(null);
+  const [contract, setContract] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { collateralRatio, totalCollateral, userDebt, userAddress } =
+    useSelector((state: any) => state.baki);
   const [collaterals] = useState([
     {
       name: "cUSD",
       image: CUSD,
-    },
-    {
-      name: "USDK",
-      image: USDK,
-    },
-
-    {
-      name: "AVAX",
-      image: AVAX,
     },
   ]);
 
   const [selectedInput, setSelectedInput] = useState<string>(
     collaterals[0].name
   );
+  useEffect(() => {
+    setProvider(new ethers.providers.Web3Provider(window.ethereum));
+  }, []);
+  useEffect(() => {
+    if (provider) {
+      const signer = provider.getSigner();
+      setContract(new ethers.Contract(config.cUSD, cUSD, signer));
+    }
+  }, [provider]);
+
   const handleInputSelect = () => {
     setInputIsOpen(!isInputOpen);
   };
@@ -45,30 +56,18 @@ const MintComponent: FC = (): JSX.Element => {
   };
 
   const handleDeposit = async () => {
-    try {
-      await deposit(depositAmount, mintAmount);
-      alert("Transaction was successful !!");
-      setDepositAmount(0);
-      setMintAmount(0);
-    } catch (error) {}
-  };
-  const handleMint = async () => {
-    try {
-      await mint(mintAmount);
-      alert("Transaction was successful !!");
-      setDepositAmount(0);
-      setMintAmount(0);
-    } catch (error) {
-      alert("Transaction was !!");
-    }
-  };
-
-  const controller = async () => {
     if (depositAmount && mintAmount) {
-      await handleDeposit();
-    }
-    if (!depositAmount && mintAmount) {
-      await handleMint();
+      setLoading(true);
+      const multiple = 10 ** 18;
+      let amount = BigInt(JSON.stringify(depositAmount * multiple));
+
+      await contract.approve(config.vaultAddress, amount);
+      try {
+        await deposit(depositAmount, mintAmount);
+        setDepositAmount(0);
+        setMintAmount(0);
+        setLoading(false);
+      } catch (error) {}
     }
   };
 
@@ -77,6 +76,19 @@ const MintComponent: FC = (): JSX.Element => {
       getAvaxRate();
     }
   }, [selectedInput]);
+
+  const calculateValue = (percentage: number) => {
+    if (depositAmount) {
+      let colBalance: any = totalCollateral * 10 ** -18;
+      let debt = userDebt * 10 ** -18;
+      let colRatio = 1.5;
+      let val2 = (colBalance + Number(depositAmount)) / colRatio;
+      let val3 = val2 - debt;
+
+      let maxVal = Math.max(0, val3);
+      setMintAmount(maxVal * percentage);
+    }
+  };
   return (
     <div className=" w-95 shadow-md rounded-lg mt-7">
       <div className="p-2 w-full justify-center items-center rounded-lg">
@@ -84,6 +96,7 @@ const MintComponent: FC = (): JSX.Element => {
         <div className="mt-10">
           <div className="mt-10">
             <label className="text-sm">Deposit Collateral</label>
+
             <SelectCollateral
               defaultToken={collaterals[0]}
               setSelectedToken={setSelectedInput}
@@ -98,6 +111,7 @@ const MintComponent: FC = (): JSX.Element => {
         </div>
         <div className="mt-10">
           <label className="text-sm">Mint</label>
+
           <div className="flex border-2 p-2 rounded-lg">
             <input
               type="text"
@@ -106,16 +120,37 @@ const MintComponent: FC = (): JSX.Element => {
               onChange={e => setMintAmount(e.target.value)}
               className="w-full focus:outline-none"
             />
+
             <div>
               <img src={ZUSD} alt="" className="h-7" />
             </div>
           </div>
         </div>
         <div className="flex justify-around">
-          <button className="w-1/3 mx-1 chip">15 %</button>
-          <button className="w-1/3 mx-1 chip">30 %</button>
-          <button className="w-1/3 mx-1 chip">50 %</button>
-          <button className="w-1/3 mx-1 chip">65 %</button>
+          <button
+            className="w-1/3 mx-1 chip"
+            onClick={() => calculateValue(10 / 100)}
+          >
+            10 %
+          </button>
+          <button
+            className="w-1/3 mx-1 chip"
+            onClick={() => calculateValue(25 / 100)}
+          >
+            25 %
+          </button>
+          <button
+            className="w-1/3 mx-1 chip"
+            onClick={() => calculateValue(50 / 100)}
+          >
+            50 %
+          </button>
+          <button
+            className="w-1/3 mx-1 chip"
+            onClick={() => calculateValue(75 / 100)}
+          >
+            75 %
+          </button>
           <div className="chip">
             <input
               type="text"
@@ -125,6 +160,7 @@ const MintComponent: FC = (): JSX.Element => {
                 backgroundColor: "transparent",
                 border: "none",
               }}
+              onChange={e => calculateValue(Number(e.target.value) / 100)}
             />
             %
           </div>
@@ -133,16 +169,20 @@ const MintComponent: FC = (): JSX.Element => {
           <div className="p-2">
             <p>Total Collateral</p>
             <p className="font-bold text-center">
-              0.0 <b>{selectedInput}</b>
+              {(totalCollateral * 10 ** -18).toFixed(2)} <b>{selectedInput}</b>
             </p>
           </div>
           <div className="p-2">
             <p>Total Debt</p>
-            <p className="font-bold text-center">0.0 zUSD</p>
+            <p className="font-bold text-center">
+              {(userDebt * 10 ** -18).toFixed(2)} zUSD
+            </p>
           </div>
           <div className="p-2">
             <p>Collateral Ratio:</p>
-            <p className="font-bold text-center">0.0%</p>
+            <p className="font-bold text-center">
+              {collateralRatio.toFixed(2)}%
+            </p>
           </div>
         </div>
         <div className="pt-3">
@@ -152,8 +192,8 @@ const MintComponent: FC = (): JSX.Element => {
             <b>zUSD</b> = 1<b>{selectedInput}</b>
           </p>
         </div>
-        <button className="mint-btn" onClick={controller}>
-          Deposit & Mint
+        <button className="mint-btn" onClick={handleDeposit}>
+          {loading ? "Loading..." : "Deposit & Mint"}
         </button>
       </div>
     </div>
@@ -182,12 +222,14 @@ const SelectCollateral: FC<Props> = ({
 }): JSX.Element => {
   const [selectedTokenImg, setSelectedTokenImg] = useState<any>("");
   const { changeNetwork } = useBaki();
+  const dispatch = useDispatch();
 
   const select = (_token: any) => {
     setSelectedToken(_token.name);
     setSelectedTokenImg(_token.image);
     setIsOpen(!isOpen);
     changeNetwork(_token.name);
+    dispatch(updateCollateral(_token.name));
   };
   return (
     <div className=" border-2 p-2 rounded-lg">
@@ -212,7 +254,7 @@ const SelectCollateral: FC<Props> = ({
       <div
         style={{
           transition: "all 0.3s ease-in-out",
-          height: isOpen ? 140 : 0,
+          height: isOpen ? 50 : 0,
         }}
       >
         {tokens.map((token: any) => (
@@ -236,4 +278,4 @@ const SelectCollateral: FC<Props> = ({
 
 export default MintComponent;
 
-// http://api.coinlayer.com/api/live?access_key=49505e855f2ab02b59638b6895755f23&symbols=BTC,ETH
+// http://api.coinlayer.com/api/live?access_key=RPGQctIVDY8a27eDUSB3i8BU4qGdqqMM&symbols=BTC,ETH
