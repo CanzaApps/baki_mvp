@@ -68,9 +68,12 @@ const Swap: FC = (): JSX.Element => {
   );
   const [fromAmount, setFromAmount] = useState<any>();
   const [toAmount, setToAmount] = useState<any>();
+  const [loadingApprove, setLoadingApprove] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [show, setShow] = useState<boolean>(false);
   const [rate, setRate] = useState<any>();
-
+  const [step, setStep] = useState<number>(1);
+  const [infiniteApprove, setInfiniteApprove] = useState<boolean>(true);
   useEffect(() => {
     setProvider(new ethers.providers.Web3Provider(window.ethereum));
   }, []);
@@ -89,6 +92,12 @@ const Swap: FC = (): JSX.Element => {
       }
 
       setContract(new ethers.Contract(from, zToken, signer));
+
+      if (window.localStorage.getItem("infiniteApprove") === "true") {
+        setInfiniteApprove(true);
+      } else {
+        setInfiniteApprove(false);
+      }
     }
   }, [provider, selectedInput]);
   const handleOutputSelect = () => {
@@ -104,19 +113,45 @@ const Swap: FC = (): JSX.Element => {
     );
     return result.data.rates;
   };
+  const handleApprove = async () => {
+    // if (infiniteApprove) {
+    //   window.localStorage.setItem(selectedInput, true);
+    //   setLoadingApprove(true);
+
+    //   await contract.approve(config.vaultAddress, 1000000);
+    //   setStep(2);
+    //   setLoadingApprove(false);
+    // } else {
+    if (step === 1) {
+      try {
+        setLoadingApprove(true);
+        const multiple = 10 ** 18;
+        let _amount = BigInt(Math.floor(fromAmount) * multiple);
+        await contract.approve(config.vaultAddress, _amount);
+        setStep(2);
+        setLoadingApprove(false);
+      } catch (error) {
+        setLoadingApprove(false);
+        console.error(error);
+        alert("Transaction failed !!");
+      }
+    }
+    // }
+  };
 
   const handleSwap = async () => {
     if (selectedInput !== selectedOutput) {
       if (!loading) {
-        setLoading(true);
-        // Approve
-        const multiple = 10 ** 18;
-
-        let _amount = BigInt(Math.floor(fromAmount) * multiple);
-        await contract.approve(config.vaultAddress, _amount);
-
-        await swap(Math.floor(fromAmount), selectedInput, selectedOutput);
-        setLoading(false);
+        try {
+          setLoading(true);
+          await swap(Math.floor(fromAmount), selectedInput, selectedOutput);
+          setLoading(false);
+          setStep(1);
+        } catch (error) {
+          setLoading(false);
+          console.error(error);
+          alert("Transaction failed !!");
+        }
       }
     }
   };
@@ -124,6 +159,7 @@ const Swap: FC = (): JSX.Element => {
   useEffect(() => {
     if (fromAmount) {
       setLoading(true);
+      setLoadingApprove(true);
       getRates(selectedInput.substring(1), selectedOutput.substring(1))
         .then((result: any) => {
           if (selectedOutput.substring(1) === "NGN") {
@@ -147,12 +183,38 @@ const Swap: FC = (): JSX.Element => {
             dispatch(updateSwapOutput(output));
           }
           setLoading(false);
+          setLoadingApprove(false);
         })
         .catch(() => {
           setLoading(false);
+          setLoadingApprove(false);
         });
     }
   }, [fromAmount, selectedOutput, selectedInput]);
+
+  useEffect(() => {
+    if (fromAmount) {
+      setShow(true);
+    } else {
+      setShow(false);
+    }
+  }, [fromAmount]);
+
+  const updateVals = (val: number) => {
+    // setFromAmount(rate / val);
+  };
+
+  const _infinitApprove = () => {
+    window.localStorage.setItem("infiniteApprove", !infiniteApprove);
+    setInfiniteApprove(!infiniteApprove);
+
+    if (infiniteApprove) {
+      window.localStorage.removeItem("zUSD");
+      window.localStorage.removeItem("zNGN");
+      window.localStorage.removeItem("zXAF");
+      window.localStorage.removeItem("zZAR");
+    }
+  };
 
   return (
     <MainLayout>
@@ -160,6 +222,21 @@ const Swap: FC = (): JSX.Element => {
         <div className=" w-96 shadow-md rounded-lg">
           <div className="p-2 w-full justify-center items-center rounded-lg">
             <h1 className="font-bold">Swap</h1>
+            <div className="flex justify-between">
+              <p>Infinite Approval</p>
+              <div className="switch" onClick={_infinitApprove}>
+                <div
+                  className="toggler"
+                  style={{
+                    marginLeft: infiniteApprove ? "50%" : 0,
+                    backgroundColor: infiniteApprove ? "#fb5f33" : "#ccc",
+                    color: infiniteApprove ? "#fff" : "#000",
+                  }}
+                >
+                  <p>{infiniteApprove ? "ON" : "OFF"}</p>
+                </div>
+              </div>
+            </div>
 
             <div className="mt-10">
               <label className="text-sm">Input</label>
@@ -184,7 +261,7 @@ const Swap: FC = (): JSX.Element => {
                 handleSelect={handleOutputSelect}
                 tokens={outputTokens}
                 value={toAmount}
-                setValue={setToAmount}
+                setValue={updateVals}
               />
             </div>
 
@@ -195,9 +272,51 @@ const Swap: FC = (): JSX.Element => {
                 to={selectedOutput}
               />
             )}
-            <button className="swap-btn" onClick={handleSwap}>
-              {loading ? "Loading..." : "Swap"}
-            </button>
+            {show && (
+              <div>
+                <div className="flex justify-around">
+                  <button
+                    style={{
+                      backgroundColor: step === 1 ? "#fb5f33" : "#edeef2",
+                    }}
+                    className="mint-btn ml-3"
+                    onClick={handleApprove}
+                  >
+                    {loadingApprove ? "Loading..." : `Approve ${selectedInput}`}
+                  </button>
+                  <button
+                    style={{
+                      backgroundColor: step === 2 ? "#fb5f33" : "#edeef2",
+                    }}
+                    className="mint-btn"
+                    onClick={handleSwap}
+                  >
+                    {loading ? "Loading..." : "Swap"}
+                  </button>
+                </div>
+                <div className="flex justify-around align-center stepper">
+                  <div
+                    style={{
+                      backgroundColor: step === 1 ? "#fb5f33" : "#edeef2",
+                      color: step === 1 ? "#fff" : "#000",
+                    }}
+                    className="number"
+                  >
+                    <p>1</p>
+                  </div>
+                  <div className="separator"></div>
+                  <div
+                    style={{
+                      backgroundColor: step === 2 ? "#fb5f33" : "#edeef2",
+                      color: step === 2 ? "#fff" : "#000",
+                    }}
+                    className="number"
+                  >
+                    <p>2</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -228,10 +347,20 @@ const SelectOutput: FC<Props> = ({
   const [selectedTokenImg, setSelectedTokenImg] = useState<any>("");
 
   const { swapOutput } = useSelector((state: any) => state.baki);
+  const [output, setOutput] = useState<any>(swapOutput);
   const select = (_token: any) => {
     setSelectedToken(_token.name);
     setSelectedTokenImg(_token.image);
     setIsOpen(!isOpen);
+  };
+
+  useEffect(() => {
+    setOutput(swapOutput);
+  }, [swapOutput]);
+
+  const handler = (state: any) => {
+    setOutput(state);
+    // setValue(Number(state));
   };
   return (
     <div className=" border-2 p-2 rounded-lg">
@@ -240,7 +369,8 @@ const SelectOutput: FC<Props> = ({
           type="text"
           placeholder="0.0"
           className="w-full focus:outline-none"
-          value={swapOutput}
+          value={output}
+          onChange={e => handler(e.target.value)}
         />
 
         <div className="flex cursor-pointer" onClick={handleSelect}>

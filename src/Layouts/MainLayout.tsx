@@ -12,7 +12,7 @@ const MainLayout: FC<MainLayoutProps> = ({ children }) => {
         {children}
       </div>
       <div className="mt-20 w-full flex justify-center items-center">
-        <p>Canza Finance © 2022 all rights reserved | www.Canza.io</p>
+        <p>Canza Finance © 2022. All rights reserved | www.canza.io</p>
       </div>
     </div>
   );
