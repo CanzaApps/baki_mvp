@@ -218,13 +218,20 @@ const useBaki = () => {
     // Get zToken to USD rate
     let zTokenToUSDRate = await getRates(_tozToken.substring(1));
 
+    let zNGNUSDRate = await getRates("NGN");
+    let zXAFUSDRate = await getRates("XAF");
+    let zZARUSDRate = await getRates("ZAR");
+
     try {
       const result = await contract.swap(
         Number(_amount),
         from,
         to,
         Math.floor(Number(zTokenFromUSDRate[_fromzToken.substring(1)])),
-        Math.floor(Number(zTokenToUSDRate[_tozToken.substring(1)]))
+        Math.floor(Number(zTokenToUSDRate[_tozToken.substring(1)])),
+        Math.floor(zNGNUSDRate.NGN),
+        Math.floor(zXAFUSDRate.XAF),
+        Math.floor(zZARUSDRate.ZAR)
       );
 
       window.location.reload();

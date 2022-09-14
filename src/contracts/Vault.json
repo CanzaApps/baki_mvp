@@ -1,12 +1,12 @@
 [
     {
         "inputs": [],
-        "stateMutability": "nonpayable",
-        "type": "constructor"
+        "name": "BurnFailed",
+        "type": "error"
     },
     {
         "inputs": [],
-        "name": "BurnFailed",
+        "name": "ImpactFailed",
         "type": "error"
     },
     {
@@ -141,13 +141,7 @@
                 "type": "address"
             },
             {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_amountToRepay",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
+                "indexed": true,
                 "internalType": "uint256",
                 "name": "_amountToWithdraw",
                 "type": "uint256"
@@ -155,32 +149,6 @@
         ],
         "name": "Withdraw",
         "type": "event"
-    },
-    {
-        "inputs": [],
-        "name": "COLLATERIZATION_RATIO_THRESHOLD",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "LIQUIDATION_REWARD",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
     },
     {
         "inputs": [
@@ -278,6 +246,189 @@
         "name": "depositAndMint",
         "outputs": [],
         "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_user",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zNGNUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zCFAUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zZARUSDRate",
+                "type": "uint256"
+            }
+        ],
+        "name": "liquidate",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "renounceOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_amountToRepay",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_amountToWithdraw",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "_zToken",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_zTokenUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zNGNUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zCFAUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zZARUSDRate",
+                "type": "uint256"
+            }
+        ],
+        "name": "repayAndWithdraw",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+            }
+        ],
+        "name": "setCollaterizationRatioThreshold",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+            }
+        ],
+        "name": "setLiquidationReward",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_amount",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "_zTokenFrom",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "_zTokenTo",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_zTokenFromUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_zTokenToUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zNGNUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zCFAUSDRate",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "zZARUSDRate",
+                "type": "uint256"
+            }
+        ],
+        "name": "swap",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "newOwner",
+                "type": "address"
+            }
+        ],
+        "name": "transferOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "inputs": [],
+        "name": "COLLATERIZATION_RATIO_THRESHOLD",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -403,31 +554,16 @@
         "type": "function"
     },
     {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_user",
-                "type": "address"
-            },
+        "inputs": [],
+        "name": "LIQUIDATION_REWARD",
+        "outputs": [
             {
                 "internalType": "uint256",
-                "name": "zNGNUSDRate",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "zCFAUSDRate",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "zZARUSDRate",
+                "name": "",
                 "type": "uint256"
             }
         ],
-        "name": "liquidate",
-        "outputs": [],
-        "stateMutability": "payable",
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -460,102 +596,6 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "renounceOwnership",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_amountToRepay",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_amountToWithdraw",
-                "type": "uint256"
-            },
-            {
-                "internalType": "address",
-                "name": "_zToken",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_zTokenUSDRate",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "zNGNUSDRate",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "zCFAUSDRate",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "zZARUSDRate",
-                "type": "uint256"
-            }
-        ],
-        "name": "repayAndWithdraw",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "_amount",
-                "type": "uint256"
-            },
-            {
-                "internalType": "address",
-                "name": "_zTokenFrom",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "_zTokenTo",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_zTokenFromUSDRate",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_zTokenToUSDRate",
-                "type": "uint256"
-            }
-        ],
-        "name": "swap",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "newOwner",
-                "type": "address"
-            }
-        ],
-        "name": "transferOwnership",
-        "outputs": [],
-        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
