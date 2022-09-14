@@ -111,7 +111,8 @@ const Swap: FC = (): JSX.Element => {
         setLoading(true);
         // Approve
         const multiple = 10 ** 18;
-        let _amount = BigInt(JSON.stringify(Math.floor(fromAmount) * multiple));
+
+        let _amount = BigInt(Math.floor(fromAmount) * multiple);
         await contract.approve(config.vaultAddress, _amount);
 
         await swap(Math.floor(fromAmount), selectedInput, selectedOutput);

@@ -1,7 +1,7 @@
 export const config: any = {
   celoMainnetChainID: 42220,
   alfajoresChainID: 44787,
-  vaultAddress: "0xA5d2f2AE7bd05fF9A66f4e3c8E67Ee785fa43518",
+  vaultAddress: "0x9cEDEb2e1c5A3De19179ffc0B3EfdD3FfbCe2F31",
   faucetAddress: "0x30702c6A7BB9dd7cC812EFf62F26f76e36DC5A33",
   zUSD: "0x5Caf144a0076cF961f5004Afa96889CA9CAb1fb2",
   zNGN: "0x440b250627C5aC09f2927820a7611B7402bC204A",
