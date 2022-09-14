@@ -118,7 +118,7 @@ const Swap: FC = (): JSX.Element => {
     //   window.localStorage.setItem(selectedInput, true);
     //   setLoadingApprove(true);
 
-    //   await contract.approve(config.vaultAddress, 1000000);
+    //   await contract.approve(config.vaultAddress, 100000000000000000);
     //   setStep(2);
     //   setLoadingApprove(false);
     // } else {
@@ -135,8 +135,8 @@ const Swap: FC = (): JSX.Element => {
         console.error(error);
         alert("Transaction failed !!");
       }
+      // }
     }
-    // }
   };
 
   const handleSwap = async () => {
@@ -204,39 +204,12 @@ const Swap: FC = (): JSX.Element => {
     // setFromAmount(rate / val);
   };
 
-  const _infinitApprove = () => {
-    window.localStorage.setItem("infiniteApprove", !infiniteApprove);
-    setInfiniteApprove(!infiniteApprove);
-
-    if (infiniteApprove) {
-      window.localStorage.removeItem("zUSD");
-      window.localStorage.removeItem("zNGN");
-      window.localStorage.removeItem("zXAF");
-      window.localStorage.removeItem("zZAR");
-    }
-  };
-
   return (
     <MainLayout>
       <div className="flex w-260 justify-around mt-10">
         <div className=" w-96 shadow-md rounded-lg">
           <div className="p-2 w-full justify-center items-center rounded-lg">
             <h1 className="font-bold">Swap</h1>
-            <div className="flex justify-between">
-              <p>Infinite Approval</p>
-              <div className="switch" onClick={_infinitApprove}>
-                <div
-                  className="toggler"
-                  style={{
-                    marginLeft: infiniteApprove ? "50%" : 0,
-                    backgroundColor: infiniteApprove ? "#fb5f33" : "#ccc",
-                    color: infiniteApprove ? "#fff" : "#000",
-                  }}
-                >
-                  <p>{infiniteApprove ? "ON" : "OFF"}</p>
-                </div>
-              </div>
-            </div>
 
             <div className="mt-10">
               <label className="text-sm">Input</label>
