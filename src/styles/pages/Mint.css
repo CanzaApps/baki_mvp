@@ -1,8 +1,7 @@
 .mint-btn {
   margin-top: 20px;
   height: 50px;
-  width: 100%;
-  background-color: #fb5f33;
+  width: 40%;
   padding: 10px;
   border-radius: 10px;
   color: #fff;
@@ -33,4 +32,49 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.stepper {
+  align-items: center;
+  padding-left: 70px;
+  padding-right: 70px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.stepper .separator {
+  height: 2px;
+  width: 80%;
+  background-color: #edeef2;
+}
+
+.stepper .number {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #edeef2;
+  padding: 5px;
+  border-radius: 20px;
+  width: 30px;
+  height: 30px;
+}
+
+.switch {
+  height: 20px;
+  width: 50px;
+  background-color: #f4f4f4;
+  border-radius: 4px;
+  padding: 2px;
+  cursor: pointer;
+}
+
+.switch .toggler {
+  height: 100%;
+  width: 50%;
+  background-color: green;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  padding: 2px;
+  font-size: 10px;
 }

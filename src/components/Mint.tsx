@@ -2,8 +2,8 @@ import { FC, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CUSD from "../assets/cUSD.png";
 import useBaki from "../hooks/useBaki";
-import AVAX from "../assets/avax.png";
-import USDK from "../assets/usdk.png";
+// import AVAX from "../assets/avax.png";
+// import USDK from "../assets/usdk.png";
 import ZUSD from "../assets/ZUSD.png";
 import { config } from "../config";
 import { ethers } from "ethers";
@@ -24,15 +24,22 @@ const MintComponent: FC = (): JSX.Element => {
   const [avaxRate, setAvaxRate] = useState<any>(false);
   const [provider, setProvider] = useState<any>(null);
   const [contract, setContract] = useState<any>(null);
+  const [loadingApprove, setLoadingApprove] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const { collateralRatio, totalCollateral, userDebt, userAddress } =
-    useSelector((state: any) => state.baki);
+  const [show, setShow] = useState<boolean>(false);
+
+  const [percentage, setPercentage] = useState<number>(0);
+
+  const { collateralRatio, totalCollateral, userDebt } = useSelector(
+    (state: any) => state.baki
+  );
   const [collaterals] = useState([
     {
       name: "cUSD",
       image: CUSD,
     },
   ]);
+  const [step, setStep] = useState<number>(1);
 
   const [selectedInput, setSelectedInput] = useState<string>(
     collaterals[0].name
@@ -55,19 +62,34 @@ const MintComponent: FC = (): JSX.Element => {
     setAvaxRate(price.value);
   };
 
+  const handleApprove = async () => {
+    if (step === 1) {
+      try {
+        setLoadingApprove(true);
+        const multiple = 10 ** 18;
+        let amount = BigInt(JSON.stringify(depositAmount * multiple));
+        await contract.approve(config.vaultAddress, amount);
+        setStep(2);
+        setLoadingApprove(false);
+      } catch (error) {
+        setLoadingApprove(false);
+        console.error(error);
+        alert("Transaction failed !!");
+      }
+    }
+  };
   const handleDeposit = async () => {
-    if (depositAmount && mintAmount) {
+    if (depositAmount && mintAmount && step === 2) {
       setLoading(true);
-      const multiple = 10 ** 18;
-      let amount = BigInt(JSON.stringify(depositAmount * multiple));
-
-      await contract.approve(config.vaultAddress, amount);
       try {
         await deposit(depositAmount, mintAmount);
-        setDepositAmount(0);
-        setMintAmount(0);
         setLoading(false);
-      } catch (error) {}
+        setStep(1);
+      } catch (error) {
+        setLoading(false);
+        console.error(error);
+        alert("Transaction failed !!");
+      }
     }
   };
 
@@ -77,8 +99,23 @@ const MintComponent: FC = (): JSX.Element => {
     }
   }, [selectedInput]);
 
+  useEffect(() => {
+    if (depositAmount && mintAmount) {
+      setShow(true);
+    } else {
+      setShow(false);
+    }
+  }, [depositAmount, mintAmount]);
+
+  const setDepAmount = (depositAmount: any) => {
+    setDepositAmount(depositAmount);
+    if (percentage) {
+      calculateValue(percentage);
+    }
+  };
   const calculateValue = (percentage: number) => {
     if (depositAmount) {
+      setPercentage(percentage);
       let colBalance: any = totalCollateral * 10 ** -18;
       let debt = userDebt * 10 ** -18;
       let colRatio = 1.5;
@@ -105,7 +142,7 @@ const MintComponent: FC = (): JSX.Element => {
               handleSelect={handleInputSelect}
               tokens={collaterals}
               value={depositAmount}
-              updateCollateralValue={setDepositAmount}
+              updateCollateralValue={setDepAmount}
             />
           </div>
         </div>
@@ -128,24 +165,40 @@ const MintComponent: FC = (): JSX.Element => {
         </div>
         <div className="flex justify-around">
           <button
+            style={{
+              color: percentage === 10 / 100 ? "#fff" : "#000",
+              backgroundColor: percentage === 10 / 100 ? "#fb5f33" : "#d3dcfc",
+            }}
             className="w-1/3 mx-1 chip"
             onClick={() => calculateValue(10 / 100)}
           >
             10 %
           </button>
           <button
+            style={{
+              color: percentage === 25 / 100 ? "#fff" : "#000",
+              backgroundColor: percentage === 25 / 100 ? "#fb5f33" : "#d3dcfc",
+            }}
             className="w-1/3 mx-1 chip"
             onClick={() => calculateValue(25 / 100)}
           >
             25 %
           </button>
           <button
+            style={{
+              color: percentage === 50 / 100 ? "#fff" : "#000",
+              backgroundColor: percentage === 50 / 100 ? "#fb5f33" : "#d3dcfc",
+            }}
             className="w-1/3 mx-1 chip"
             onClick={() => calculateValue(50 / 100)}
           >
             50 %
           </button>
           <button
+            style={{
+              color: percentage === 75 / 100 ? "#fff" : "#000",
+              backgroundColor: percentage === 75 / 100 ? "#fb5f33" : "#d3dcfc",
+            }}
             className="w-1/3 mx-1 chip"
             onClick={() => calculateValue(75 / 100)}
           >
@@ -192,9 +245,51 @@ const MintComponent: FC = (): JSX.Element => {
             <b>zUSD</b> = 1<b>{selectedInput}</b>
           </p>
         </div>
-        <button className="mint-btn" onClick={handleDeposit}>
-          {loading ? "Loading..." : "Deposit & Mint"}
-        </button>
+        {show && (
+          <div>
+            <div className="flex justify-around">
+              <button
+                style={{
+                  backgroundColor: step === 1 ? "#fb5f33" : "#edeef2",
+                }}
+                className="mint-btn ml-3"
+                onClick={handleApprove}
+              >
+                {loadingApprove ? "Loading..." : `Approve ${selectedInput}`}
+              </button>
+              <button
+                style={{
+                  backgroundColor: step === 2 ? "#fb5f33" : "#edeef2",
+                }}
+                className="mint-btn"
+                onClick={handleDeposit}
+              >
+                {loading ? "Loading..." : "Deposit & Mint"}
+              </button>
+            </div>
+            <div className="flex justify-around align-center stepper">
+              <div
+                style={{
+                  backgroundColor: step === 1 ? "#fb5f33" : "#edeef2",
+                  color: step === 1 ? "#fff" : "#000",
+                }}
+                className="number"
+              >
+                <p>1</p>
+              </div>
+              <div className="separator"></div>
+              <div
+                style={{
+                  backgroundColor: step === 2 ? "#fb5f33" : "#edeef2",
+                  color: step === 2 ? "#fff" : "#000",
+                }}
+                className="number"
+              >
+                <p>2</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
